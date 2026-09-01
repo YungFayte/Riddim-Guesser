@@ -26,7 +26,7 @@
     /* Confetti Canvas Across Full Viewport */
     #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; }
 
-    /* Debug Banner & Live Timer */
+    /* Debug & Admin Banner */
     .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; }
     .timestamp-finder { font-family: monospace; font-size: 1.1rem; color: #fff; background: #000; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--debug-color); margin-top: 5px; display: inline-block; }
 
@@ -59,10 +59,11 @@
     .btn-next { background: #fff; display: none; margin-top: 15px; width: 100%; }
     .btn-restart { background: var(--error-color); color: #fff; display: none; margin-top: 15px; width: 100%; }
     .btn-sc { background: var(--sc-orange); color: #fff; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; text-decoration: none; }
+    .btn-admin { background: var(--debug-color); color: #fff; margin-top: 10px; font-size: 0.85rem; padding: 8px 12px; }
 
     .search-container { position: relative; margin-bottom: 15px; }
-    input[type="text"] { width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #333748; color: #fff; border-radius: 6px; font-size: 1rem; outline: none; }
-    input[type="text"]:focus { border-color: var(--accent-color); }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #333748; color: #fff; border-radius: 6px; font-size: 1rem; outline: none; }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: var(--accent-color); }
     
     .dropdown { position: absolute; width: 100%; background: #1f222e; border: 1px solid #333748; border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 10; display: none; text-align: left; }
     .dropdown-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #2a2e3d; }
@@ -89,13 +90,22 @@
     .artist-name-display { font-size: 1rem; color: var(--muted-color); margin-bottom: 15px; }
     .points-breakdown { background: #0d0e12; border: 1px solid #262936; border-radius: 8px; padding: 10px; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 15px; }
 
-    /* Debug Song Selector Modal */
+    /* Modal Overlay Base */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { background: var(--card-bg); border: 1px solid var(--debug-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 80vh; display: flex; flex-direction: column; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .modal-content { background: var(--card-bg); border: 1px solid var(--debug-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #262936; padding-bottom: 10px; }
     .modal-title { color: var(--debug-color); font-size: 1.2rem; font-weight: bold; }
     .close-modal-btn { background: transparent; border: none; color: var(--muted-color); font-size: 1.5rem; cursor: pointer; }
     .close-modal-btn:hover { color: #fff; }
+
+    /* Admin Song Builder Form Styling */
+    .admin-form-group { text-align: left; margin-bottom: 12px; }
+    .admin-form-group label { display: block; font-size: 0.8rem; color: var(--muted-color); text-transform: uppercase; margin-bottom: 4px; font-weight: bold; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .json-output-box { width: 100%; height: 120px; background: #08090c; color: #00ffcc; font-family: monospace; font-size: 0.8rem; padding: 10px; border: 1px solid #262936; border-radius: 6px; resize: none; margin-top: 10px; }
+    .admin-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+    /* Debug Song Selector Modal */
     .debug-search-input { margin-bottom: 12px; }
     .song-list-scroll { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; text-align: left; }
     .song-list-item { background: #0d0e12; border: 1px solid #262936; padding: 12px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
@@ -166,6 +176,7 @@
 
     <button class="btn btn-next" id="next-btn" onclick="triggerFadeOutAndNext()">NEXT TRACK ➔</button>
     <button class="btn btn-restart" id="restart-btn" onclick="restartGame()">GAME OVER - PLAY AGAIN 🔄</button>
+    <button class="btn btn-admin" onclick="openAdminModal()">🛠️ OPEN SONG BUILDER (ADMIN)</button>
 
     <div class="result-msg" id="result-msg"></div>
   </div>
@@ -185,6 +196,66 @@
       </a>
 
       <button class="btn btn-next" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext()">NEXT TRACK ➔</button>
+    </div>
+  </div>
+
+  <!-- In-App Song Builder Admin Modal -->
+  <div class="modal-overlay" id="admin-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">🛠️ SONG BUILDER & JSON EXPORTER</div>
+        <button class="close-modal-btn" onclick="closeAdminModal()">&times;</button>
+      </div>
+      
+      <div style="overflow-y:auto; flex:1; padding-right:5px;">
+        <div class="admin-form-group">
+          <label>SoundCloud Track URL</label>
+          <input type="text" id="admin-sc-url" placeholder="https://soundcloud.com/artist/track-name">
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-form-group">
+            <label>Artist Name</label>
+            <input type="text" id="admin-artist" placeholder="e.g. Subtronics">
+          </div>
+          <div class="admin-form-group">
+            <label>Track Title</label>
+            <input type="text" id="admin-title" placeholder="e.g. Scream Saver">
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-form-group">
+            <label>Start Time (Seconds)</label>
+            <input type="number" id="admin-starttime" placeholder="e.g. 54.5" step="0.5">
+          </div>
+          <div class="admin-form-group">
+            <label>Difficulty Rating</label>
+            <select id="admin-difficulty">
+              <option value="Easy">Easy (Iconic Mainstage)</option>
+              <option value="Medium">Medium (Well Known Drop)</option>
+              <option value="Hard">Hard (Underground / Chops)</option>
+              <option value="Expert">Expert (Obscure Double Drop)</option>
+              <option value="Impossible">Impossible (0.5s Vocal Chop)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <button class="btn btn-admin" style="background:#262936;" onclick="testAdminTimestamp()">▶ TEST TIMESTAMP</button>
+          <button class="btn" style="font-size:0.9rem;" onclick="addNewTrackToJSON()">➕ ADD TRACK TO DECK</button>
+        </div>
+
+        <div class="admin-form-group" style="margin-top:15px;">
+          <label>Live Updated songs.json Array</label>
+          <textarea class="json-output-box" id="json-output" readonly></textarea>
+        </div>
+
+        <div class="admin-actions">
+          <button class="btn btn-admin" style="background:var(--accent-color); color:#000;" onclick="copyJSONToClipboard()">📋 COPY JSON</button>
+          <button class="btn btn-admin" style="background:var(--sc-orange);" onclick="downloadJSONFile()">💾 DOWNLOAD SONGS.JSON</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -248,6 +319,7 @@
 
         renderNotches();
         initConfetti();
+        initHotkeys();
 
         const response = await fetch('songs.json');
         if (!response.ok) throw new Error("Could not load songs.json");
@@ -265,6 +337,16 @@
         document.getElementById('result-msg').style.color = "var(--error-color)";
       }
     };
+
+    function initHotkeys() {
+      // Hotkey shortcut: CTRL + SHIFT + A opens Admin Builder
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+          e.preventDefault();
+          openAdminModal();
+        }
+      });
+    }
 
     function renderNotches() {
       const container = document.getElementById('progress-container');
@@ -292,7 +374,7 @@
       
       if (fadeTimerId) clearInterval(fadeTimerId);
       const startTime = performance.now();
-      const fadeDurationMs = 1000; // 1.0 second duration
+      const fadeDurationMs = 1000;
 
       fadeTimerId = setInterval(() => {
         const elapsed = performance.now() - startTime;
@@ -317,10 +399,100 @@
       });
     }
 
-    /* SoundCloud Button Click: Closes Modal Immediately & Triggers Fade / Next Song */
     function handleSoundCloudClick() {
       document.getElementById('victory-modal').style.display = 'none';
       triggerFadeOutAndNext();
+    }
+
+    /* Admin Song Builder Modal Logic */
+    function openAdminModal() {
+      document.getElementById('admin-modal').style.display = 'flex';
+      updateJSONBoxDisplay();
+    }
+
+    function closeAdminModal() {
+      document.getElementById('admin-modal').style.display = 'none';
+    }
+
+    function updateJSONBoxDisplay() {
+      document.getElementById('json-output').value = JSON.stringify(songs, null, 2);
+    }
+
+    function testAdminTimestamp() {
+      const scUrl = document.getElementById('admin-sc-url').value.trim();
+      const startTimeSec = parseFloat(document.getElementById('admin-starttime').value) || 0;
+      
+      if (!scUrl) {
+        alert("Please enter a valid SoundCloud track URL to test.");
+        return;
+      }
+
+      closeAdminModal();
+      
+      const testSongObj = {
+        id: "TEST",
+        title: document.getElementById('admin-title').value.trim() || "Preview Track",
+        artist: document.getElementById('admin-artist').value.trim() || "Preview Artist",
+        soundcloudUrl: scUrl,
+        startTime: startTimeSec,
+        difficulty: document.getElementById('admin-difficulty').value
+      };
+
+      forceLoadSongById(null, testSongObj);
+    }
+
+    function addNewTrackToJSON() {
+      const scUrl = document.getElementById('admin-sc-url').value.trim();
+      const artist = document.getElementById('admin-artist').value.trim();
+      const title = document.getElementById('admin-title').value.trim();
+      const startTimeSec = parseFloat(document.getElementById('admin-starttime').value) || 0;
+      const diff = document.getElementById('admin-difficulty').value;
+
+      if (!scUrl || !artist || !title) {
+        alert("Please fill out SoundCloud URL, Artist, and Track Title.");
+        return;
+      }
+
+      const nextId = songs.length > 0 ? (Math.max(...songs.map(s => parseInt(s.id) || 0)) + 1) : 1;
+
+      const newTrackObj = {
+        id: nextId,
+        title: title,
+        artist: artist,
+        soundcloudUrl: scUrl,
+        startTime: startTimeSec,
+        difficulty: diff
+      };
+
+      songs.push(newTrackObj);
+      songDeck.push(newTrackObj);
+      updateJSONBoxDisplay();
+
+      // Reset Form Inputs
+      document.getElementById('admin-sc-url').value = '';
+      document.getElementById('admin-artist').value = '';
+      document.getElementById('admin-title').value = '';
+      document.getElementById('admin-starttime').value = '';
+
+      alert(`✅ Track #${nextId} "${artist} - ${title}" added to deck & JSON!`);
+    }
+
+    function copyJSONToClipboard() {
+      const textarea = document.getElementById('json-output');
+      textarea.select();
+      navigator.clipboard.writeText(textarea.value);
+      alert("📋 JSON array copied to clipboard! Paste it into your songs.json on GitHub.");
+    }
+
+    function downloadJSONFile() {
+      const jsonStr = JSON.stringify(songs, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'songs.json';
+      a.click();
+      URL.revokeObjectURL(url);
     }
 
     function openDebugModal() {
@@ -369,12 +541,17 @@
       populateModalSongList(filtered);
     }
 
-    function forceLoadSongById(targetId) {
-      const found = songs.find(s => String(s.id) === String(targetId));
+    function forceLoadSongById(targetId = null, directSongObj = null) {
+      let found = directSongObj;
+      if (!found && targetId !== null) {
+        found = songs.find(s => String(s.id) === String(targetId));
+      }
+
       if (!found) {
-        alert(`Song ID "${targetId}" not found in songs.json!`);
+        alert(`Song not found!`);
         return;
       }
+
       isTestMode = true;
       document.getElementById('test-banner').style.display = 'block';
       document.getElementById('progress-container').classList.add('scrubber');
@@ -573,7 +750,14 @@
         const item = document.createElement('div');
         item.className = 'dropdown-item debug';
         
-        if (queryId.length === 0 || queryId.toLowerCase() === 'list') {
+        if (queryId.toLowerCase() === 'admin' || queryId.toLowerCase() === 'builder') {
+          item.innerText = `🛠️ OPEN SONG BUILDER & JSON EXPORTER`;
+          item.onclick = () => {
+            dropdown.style.display = 'none';
+            document.getElementById('guess-input').value = '';
+            openAdminModal();
+          };
+        } else if (queryId.length === 0 || queryId.toLowerCase() === 'list') {
           item.innerText = `🛠️ OPEN DEBUG SONG SELECTOR MENU`;
           item.onclick = () => {
             dropdown.style.display = 'none';
