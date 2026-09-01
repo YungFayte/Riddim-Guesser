@@ -22,8 +22,9 @@
     h1 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
     p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
 
-    /* Test Mode Banner */
-    .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 6px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; }
+    /* Debug Tool Banner & Live Timer */
+    .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; }
+    .timestamp-finder { font-family: monospace; font-size: 1.1rem; color: #fff; background: #000; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--debug-color); margin-top: 5px; display: inline-block; }
 
     .scoreboard { display: flex; justify-content: space-between; background: #0d0e12; padding: 12px 18px; border-radius: 8px; border: 1px solid #262936; margin-bottom: 15px; }
     .score-stat { text-align: center; }
@@ -37,10 +38,14 @@
     .diff-expert { background: rgba(155, 89, 182, 0.2); color: #9b59b6; border: 1px solid #9b59b6; }
     .diff-impossible { background: rgba(230, 126, 34, 0.2); color: #e67e22; border: 1px solid #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.4); }
 
-    .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; margin-bottom: 15px; }
+    .controls-row { display: flex; gap: 10px; margin-bottom: 15px; }
+    .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; }
     .btn:active { transform: scale(0.98); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-next { background: #fff; display: none; margin-top: 15px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-skip { background: #333748; color: #fff; width: 40%; }
+    .btn-skip:hover { background: #44495e; }
+    .btn-next { background: #fff; display: none; margin-top: 15px; width: 100%; }
+    .btn-restart { background: var(--error-color); color: #fff; display: none; margin-top: 15px; width: 100%; }
 
     .search-container { position: relative; margin-bottom: 15px; }
     input[type="text"] { width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #333748; color: #fff; border-radius: 6px; font-size: 1rem; outline: none; }
@@ -65,19 +70,31 @@
 <body>
 
   <div class="container">
-    <div class="test-mode-banner" id="test-banner">⚠️ DEBUG MODE: TEST TRACK LOADED (SCORE PAUSED)</div>
+    <div class="test-mode-banner" id="test-banner">
+      ⚠️ DEBUG MODE: TEST TRACK LOADED
+      <br>Exact Current Timestamp: <span class="timestamp-finder" id="live-time">0.00s</span>
+    </div>
 
     <h1>BASS GUESSER</h1>
     <p class="subtitle">Dubstep & Riddim Edition</p>
 
+    <!-- Score & Resource Dashboard -->
     <div class="scoreboard">
       <div class="score-stat">
-        <div class="score-label">Total Score</div>
+        <div class="score-label">Lives</div>
+        <div class="score-val" id="lives-display">❤️❤️❤️</div>
+      </div>
+      <div class="score-stat">
+        <div class="score-label">Score</div>
         <div class="score-val" id="total-score">0</div>
       </div>
       <div class="score-stat">
-        <div class="score-label">Current Streak</div>
+        <div class="score-label">Streak</div>
         <div class="score-val" id="current-streak">0 🔥</div>
+      </div>
+      <div class="score-stat">
+        <div class="score-label">Skips</div>
+        <div class="score-val" id="skips-display">⏭️ 3</div>
       </div>
     </div>
 
@@ -91,7 +108,10 @@
       <div class="attempt-box" id="box-4">16s</div>
     </div>
 
-    <button class="btn" id="play-btn" onclick="playSnippet()">▶ PLAY AUDIO</button>
+    <div class="controls-row">
+      <button class="btn" id="play-btn" onclick="playSnippet()">▶ PLAY AUDIO</button>
+      <button class="btn btn-skip" id="skip-btn" onclick="skipTrack()">SKIP ⏭️</button>
+    </div>
 
     <div class="search-container">
       <input type="text" id="guess-input" placeholder="Search artist or track title..." oninput="handleSearch()">
@@ -99,6 +119,7 @@
     </div>
 
     <button class="btn btn-next" id="next-btn" onclick="loadNextSong()">NEXT TRACK ➔</button>
+    <button class="btn btn-restart" id="restart-btn" onclick="restartGame()">GAME OVER - PLAY AGAIN 🔄</button>
 
     <div class="result-msg" id="result-msg"></div>
   </div>
@@ -106,7 +127,6 @@
   <iframe id="sc-player" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&show_artwork=false" allow="autoplay"></iframe>
 
   <script>
-    // Updated intervals per your request: 0.5s, 1.5s, 3s, 8s, 16s
     const INTERVALS = [0.5, 1.5, 3, 8, 16];
     const ATTEMPT_MULTIPLIERS = [5.0, 3.0, 2.0, 1.25, 1.0];
     const BASE_SCORE = 1000;
@@ -126,10 +146,15 @@
     let widget = null;
     let isGameOver = false;
     let isReady = false;
-    let isTestMode = false; // Flag to check if song was manually forced
+    let isTestMode = false;
+    let debugTimerInterval = null;
 
+    // Player Resources
+    let lives = 3;
+    let skips = 3;
     let totalScore = 0;
     let currentStreak = 0;
+    let successfulGuessesCounter = 0; // Tracks progress toward next skip bonus
 
     window.onload = async () => {
       try {
@@ -164,7 +189,6 @@
       }
     }
 
-    // Force load a specific song by ID for admin testing
     function forceLoadSongById(targetId) {
       const found = songs.find(s => String(s.id) === String(targetId));
       if (!found) {
@@ -173,7 +197,20 @@
       }
       isTestMode = true;
       document.getElementById('test-banner').style.display = 'block';
+      startDebugTimer();
       loadNextSong(found);
+    }
+
+    function startDebugTimer() {
+      if (debugTimerInterval) clearInterval(debugTimerInterval);
+      debugTimerInterval = setInterval(() => {
+        if (widget && isTestMode) {
+          widget.getPosition((ms) => {
+            const seconds = (ms / 1000).toFixed(2);
+            document.getElementById('live-time').innerText = `${seconds}s`;
+          });
+        }
+      }, 100);
     }
 
     function loadNextSong(forcedSong = null) {
@@ -189,14 +226,19 @@
       document.getElementById('guess-input').value = '';
       document.getElementById('dropdown').style.display = 'none';
       document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('restart-btn').style.display = 'none';
       playBtn.style.display = 'block';
+      document.getElementById('skip-btn').disabled = (skips <= 0);
       updateTrackerUI();
+      updateDashboardUI();
 
       if (forcedSong) {
         currentSong = forcedSong;
       } else {
-        isTestMode = false;
-        document.getElementById('test-banner').style.display = 'none';
+        if (!isTestMode) {
+          document.getElementById('test-banner').style.display = 'none';
+          if (debugTimerInterval) clearInterval(debugTimerInterval);
+        }
         
         if (songDeck.length === 0) {
           shuffleDeck();
@@ -238,6 +280,14 @@
       }, duration * 1000);
     }
 
+    function skipTrack() {
+      if (skips <= 0 || isGameOver) return;
+      skips--;
+      updateDashboardUI();
+      document.getElementById('result-msg').innerHTML = `<span style="color:var(--muted-color);">Skipped track: <strong>${currentSong.artist} - ${currentSong.title}</strong></span>`;
+      endRound(false);
+    }
+
     function handleSearch() {
       const input = document.getElementById('guess-input').value.trim();
       const dropdown = document.getElementById('dropdown');
@@ -248,13 +298,12 @@
         return;
       }
 
-      // Check for Admin Command (id:X)
       if (input.toLowerCase().startsWith('id:')) {
         const queryId = input.substring(3).trim();
         dropdown.style.display = 'block';
         const item = document.createElement('div');
         item.className = 'dropdown-item debug';
-        item.innerText = `🛠️ DEV COMMAND: Force Load Song ID #${queryId}`;
+        item.innerText = `🛠️ DEV COMMAND: Load Song ID #${queryId}`;
         item.onclick = () => forceLoadSongById(queryId);
         dropdown.appendChild(item);
         return;
@@ -294,36 +343,53 @@
         if (!isTestMode) {
           totalScore += pointsEarned;
           currentStreak++;
-          updateScoreboard();
-          document.getElementById('result-msg').innerHTML = `🎉 CORRECT!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:#00ffcc; font-size:0.9rem;">+${pointsEarned.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)</span>`;
+          successfulGuessesCounter++;
+
+          // Award bonus skip every 10 correct songs
+          let skipBonusMsg = "";
+          if (successfulGuessesCounter % 10 === 0) {
+            skips++;
+            skipBonusMsg = "<br><span style='color:#00ffcc; font-weight:bold;'>🎁 BONUS: +1 SKIP EARNED!</span>";
+          }
+
+          updateDashboardUI();
+          document.getElementById('result-msg').innerHTML = `🎉 CORRECT!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:#00ffcc; font-size:0.9rem;">+${pointsEarned.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)</span>${skipBonusMsg}`;
         } else {
-          document.getElementById('result-msg').innerHTML = `🎉 CORRECT (TEST MODE)!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:var(--debug-color); font-size:0.9rem;">(Scores bypass logged in Debug Mode)</span>`;
+          document.getElementById('result-msg').innerHTML = `🎉 CORRECT (TEST MODE)!<br><strong>${currentSong.artist} - ${currentSong.title}</strong>`;
         }
         
         document.getElementById('result-msg').style.color = 'var(--accent-color)';
-        endRound();
+        endRound(true);
       } else {
         document.getElementById(`box-${currentAttempt}`).className = 'attempt-box fail';
         currentAttempt++;
 
         if (currentAttempt >= INTERVALS.length) {
           if (!isTestMode) {
+            lives--;
             currentStreak = 0;
-            updateScoreboard();
+            updateDashboardUI();
           }
 
-          document.getElementById('result-msg').innerHTML = `❌ GAME OVER!<br>Track was: <strong>${currentSong.artist} - ${currentSong.title}</strong>`;
+          document.getElementById('result-msg').innerHTML = `❌ OUT OF GUESSES!<br>Track was: <strong>${currentSong.artist} - ${currentSong.title}</strong>`;
           document.getElementById('result-msg').style.color = 'var(--error-color)';
-          endRound();
+          endRound(false);
         } else {
           updateTrackerUI();
         }
       }
     }
 
-    function updateScoreboard() {
+    function updateDashboardUI() {
+      // Format Hearts for Lives
+      let heartsStr = "";
+      for (let i = 0; i < 3; i++) {
+        heartsStr += (i < lives) ? "❤️" : "🖤";
+      }
+      document.getElementById('lives-display').innerText = heartsStr;
       document.getElementById('total-score').innerText = totalScore.toLocaleString();
       document.getElementById('current-streak').innerText = `${currentStreak} 🔥`;
+      document.getElementById('skips-display').innerText = `⏭️ ${skips}`;
     }
 
     function updateTrackerUI() {
@@ -339,11 +405,28 @@
       }
     }
 
-    function endRound() {
+    function endRound(isWin) {
       isGameOver = true;
       widget.seekTo(Math.floor(currentSong.startTime * 1000));
       widget.play();
-      document.getElementById('next-btn').style.display = 'block';
+      document.getElementById('skip-btn').disabled = true;
+
+      if (lives <= 0 && !isTestMode) {
+        document.getElementById('result-msg').innerHTML += `<br><span style="color:var(--error-color); font-size:1.2rem;">💀 GAME OVER! Final Score: ${totalScore.toLocaleString()}</span>`;
+        document.getElementById('restart-btn').style.display = 'block';
+      } else {
+        document.getElementById('next-btn').style.display = 'block';
+      }
+    }
+
+    function restartGame() {
+      lives = 3;
+      skips = 3;
+      totalScore = 0;
+      currentStreak = 0;
+      successfulGuessesCounter = 0;
+      shuffleDeck();
+      loadNextSong();
     }
   </script>
 </body>
