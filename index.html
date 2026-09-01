@@ -180,7 +180,6 @@
       
       <div class="points-breakdown" id="victory-points-msg">+0 PTS</div>
 
-      <!-- Real HTML Link Anchor: Guaranteed to Open without Popup Blocking -->
       <a id="victory-sc-anchor" href="#" target="_blank" onclick="handleSoundCloudClick()" class="btn btn-sc">
         LISTEN ON SOUNDCLOUD 🎧
       </a>
@@ -228,7 +227,7 @@
     let isDebugPlaying = false;
     
     let animFrameId = null;
-    let fadeOutInterval = null;
+    let fadeTimerId = null;
     let songDurationMs = 0;
     let preloadedArtworkObj = null;
 
@@ -287,27 +286,29 @@
       }
     }
 
-    /* 1.0-Second Volume Fade-Out Engine */
+    /* Timestamp-Based Audio Volume Fade Engine */
     function fadeOutAudio(onCompleteCallback) {
       if (!widget) { if (onCompleteCallback) onCompleteCallback(); return; }
       
-      if (fadeOutInterval) clearInterval(fadeOutInterval);
-      let currentVol = 100;
-      const stepMs = 40; 
-      const volStep = 100 / (1000 / stepMs);
+      if (fadeTimerId) clearInterval(fadeTimerId);
+      const startTime = performance.now();
+      const fadeDurationMs = 1000; // 1.0 second duration
 
-      fadeOutInterval = setInterval(() => {
-        currentVol -= volStep;
-        if (currentVol <= 0) {
-          clearInterval(fadeOutInterval);
-          fadeOutInterval = null;
+      fadeTimerId = setInterval(() => {
+        const elapsed = performance.now() - startTime;
+        const remainingPct = 1 - Math.min(1, elapsed / fadeDurationMs);
+        const newVol = Math.floor(remainingPct * 100);
+
+        widget.setVolume(newVol);
+
+        if (remainingPct <= 0) {
+          clearInterval(fadeTimerId);
+          fadeTimerId = null;
           widget.setVolume(0);
           widget.pause();
           if (onCompleteCallback) onCompleteCallback();
-        } else {
-          widget.setVolume(Math.max(0, Math.floor(currentVol)));
         }
-      }, stepMs);
+      }, 30);
     }
 
     function triggerFadeOutAndNext() {
@@ -316,7 +317,7 @@
       });
     }
 
-    /* SoundCloud Anchor Click Handler: Fades Audio & Auto-Nexts in Background */
+    /* SoundCloud Button Click: Closes Modal Immediately & Triggers Fade / Next Song */
     function handleSoundCloudClick() {
       document.getElementById('victory-modal').style.display = 'none';
       triggerFadeOutAndNext();
@@ -381,7 +382,7 @@
     }
 
     function loadNextSong(forcedSong = null) {
-      if (fadeOutInterval) { clearInterval(fadeOutInterval); fadeOutInterval = null; }
+      if (fadeTimerId) { clearInterval(fadeTimerId); fadeTimerId = null; }
       
       isGameOver = false;
       isReady = false;
@@ -663,7 +664,6 @@
       document.getElementById('victory-artist').innerText = currentSong.artist;
       document.getElementById('victory-points-msg').innerHTML = `+${points.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)${bonusMsg}`;
 
-      // Set URL directly on link anchor href
       const scAnchor = document.getElementById('victory-sc-anchor');
       scAnchor.href = currentSong.soundcloudUrl;
 
