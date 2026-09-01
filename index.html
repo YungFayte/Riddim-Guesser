@@ -14,13 +14,17 @@
       --muted-color: #a0a5b5;
       --error-color: #ff4757;
       --debug-color: #e36414;
+      --sc-orange: #ff5500;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-    .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #262936; position: relative; }
+    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; position: relative; overflow-x: hidden; }
+    .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #262936; position: relative; z-index: 1; }
     h1 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
     p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
+
+    /* Confetti Canvas */
+    #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99; }
 
     /* Debug Banner & Live Timer */
     .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; }
@@ -47,13 +51,14 @@
     .interval-notch { position: absolute; top: 0; bottom: 0; width: 2px; background: #262936; z-index: 2; pointer-events: none; }
 
     .controls-row { display: flex; gap: 10px; margin-bottom: 15px; }
-    .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; }
+    .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; text-decoration: none; display: inline-block; }
     .btn:active { transform: scale(0.98); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-skip { background: #333748; color: #fff; width: 40%; }
     .btn-skip:hover { background: #44495e; }
     .btn-next { background: #fff; display: none; margin-top: 15px; width: 100%; }
     .btn-restart { background: var(--error-color); color: #fff; display: none; margin-top: 15px; width: 100%; }
+    .btn-sc { background: var(--sc-orange); color: #fff; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
 
     .search-container { position: relative; margin-bottom: 15px; }
     input[type="text"] { width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #333748; color: #fff; border-radius: 6px; font-size: 1rem; outline: none; }
@@ -72,6 +77,17 @@
     .attempt-box.success { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
     .result-msg { font-size: 1rem; font-weight: bold; margin-top: 15px; min-height: 25px; line-height: 1.4; }
+
+    /* Victory Modal Popup */
+    .victory-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 200; justify-content: center; align-items: center; padding: 20px; }
+    .victory-card { background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 16px; width: 100%; max-width: 420px; padding: 25px; text-align: center; box-shadow: 0 0 30px rgba(0,255,204,0.3); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    .victory-title { color: var(--accent-color); font-size: 1.6rem; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+    .album-art { width: 160px; height: 160px; border-radius: 12px; object-fit: cover; border: 2px solid #333748; margin: 0 auto 15px auto; display: block; background: #0d0e12; }
+    .track-name-display { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
+    .artist-name-display { font-size: 1rem; color: var(--muted-color); margin-bottom: 15px; }
+    .points-breakdown { background: #0d0e12; border: 1px solid #262936; border-radius: 8px; padding: 10px; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 15px; }
 
     /* Debug Song Selector Modal */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
@@ -93,6 +109,8 @@
   </style>
 </head>
 <body>
+
+  <canvas id="confetti-canvas"></canvas>
 
   <div class="container">
     <div class="test-mode-banner" id="test-banner">
@@ -154,7 +172,25 @@
     <div class="result-msg" id="result-msg"></div>
   </div>
 
-  <!-- Debug Selector Modal -->
+  <!-- Victory Modal Screen -->
+  <div class="victory-modal-overlay" id="victory-modal">
+    <div class="victory-card">
+      <div class="victory-title">🎉 TRACK GUESSED!</div>
+      <img id="victory-artwork" class="album-art" src="" alt="Album Artwork">
+      <div class="track-name-display" id="victory-track-title">Track Title</div>
+      <div class="artist-name-display" id="victory-artist">Artist Name</div>
+      
+      <div class="points-breakdown" id="victory-points-msg">+0 PTS</div>
+
+      <a id="victory-sc-link" href="#" target="_blank" class="btn btn-sc">
+        LISTEN ON SOUNDCLOUD 🎧
+      </a>
+
+      <button class="btn btn-next" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext()">NEXT TRACK ➔</button>
+    </div>
+  </div>
+
+  <!-- Debug Song Selector Modal -->
   <div class="modal-overlay" id="debug-modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -194,6 +230,7 @@
     
     let animFrameId = null;
     let songDurationMs = 0;
+    let currentArtworkUrl = "";
 
     // Player Resources
     let lives = 3;
@@ -211,6 +248,7 @@
         });
 
         renderNotches();
+        initConfetti();
 
         const response = await fetch('songs.json');
         if (!response.ok) throw new Error("Could not load songs.json");
@@ -313,6 +351,7 @@
       isReady = false;
       isDebugPlaying = false;
       currentAttempt = 0;
+      currentArtworkUrl = "";
       stopMeterFrameLoop();
       resetProgressBar();
       
@@ -352,10 +391,21 @@
 
       widget.load(currentSong.soundcloudUrl, {
         auto_play: false,
-        show_artwork: false,
+        show_artwork: true,
         callback: () => {
           widget.getDuration((dur) => {
             songDurationMs = dur;
+          });
+
+          // Fetch Track Metadata & Artwork
+          widget.getSounds((sounds) => {
+            if (sounds && sounds.length > 0) {
+              const sound = sounds[0];
+              if (sound.artwork_url) {
+                // Get high-res artwork version
+                currentArtworkUrl = sound.artwork_url.replace('-large', '-t500x500');
+              }
+            }
           });
 
           if (!isTestMode) {
@@ -411,7 +461,6 @@
       }, snippetSec * 1000);
     }
 
-    /* Ultra-Smooth 60fps+ requestAnimationFrame Meter Renderer */
     function startMeterFrameLoop(startMs = 0, endMs = 0) {
       stopMeterFrameLoop();
 
@@ -547,12 +596,12 @@
           }
 
           updateDashboardUI();
-          document.getElementById('result-msg').innerHTML = `🎉 CORRECT!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:#00ffcc; font-size:0.9rem;">+${pointsEarned.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)</span>${skipBonusMsg}`;
+          showVictoryModal(pointsEarned, diffMult, attemptMult, skipBonusMsg);
         } else {
-          document.getElementById('result-msg').innerHTML = `🎉 CORRECT (TEST MODE)!<br><strong>${currentSong.artist} - ${currentSong.title}</strong>`;
+          showVictoryModal(0, diffMult, attemptMult, "<br>(Debug Mode)");
         }
         
-        document.getElementById('result-msg').style.color = 'var(--accent-color)';
+        triggerConfettiBurst();
         endRound(true);
       } else {
         document.getElementById(`box-${currentAttempt}`).className = 'attempt-box fail';
@@ -572,6 +621,27 @@
           updateTrackerUI();
         }
       }
+    }
+
+    /* Victory Modal Handler */
+    function showVictoryModal(points, diffMult, attemptMult, bonusMsg) {
+      document.getElementById('victory-track-title').innerText = currentSong.title;
+      document.getElementById('victory-artist').innerText = currentSong.artist;
+      document.getElementById('victory-points-msg').innerHTML = `+${points.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)${bonusMsg}`;
+      
+      const scLink = document.getElementById('victory-sc-link');
+      scLink.href = currentSong.soundcloudUrl;
+
+      // Fallback placeholder image if artwork load fails
+      const artImg = document.getElementById('victory-artwork');
+      artImg.src = currentArtworkUrl || "https://i1.sndcdn.com/avatars-000347293844-0a3k9v-t500x500.jpg";
+
+      document.getElementById('victory-modal').style.display = 'flex';
+    }
+
+    function closeVictoryModalAndNext() {
+      document.getElementById('victory-modal').style.display = 'none';
+      loadNextSong();
     }
 
     function updateDashboardUI() {
@@ -605,11 +675,13 @@
       widget.play();
       document.getElementById('skip-btn').disabled = true;
 
-      if (lives <= 0 && !isTestMode) {
-        document.getElementById('result-msg').innerHTML += `<br><span style="color:var(--error-color); font-size:1.2rem;">💀 GAME OVER! Final Score: ${totalScore.toLocaleString()}</span>`;
-        document.getElementById('restart-btn').style.display = 'block';
-      } else {
-        document.getElementById('next-btn').style.display = 'block';
+      if (!isWin) {
+        if (lives <= 0 && !isTestMode) {
+          document.getElementById('result-msg').innerHTML += `<br><span style="color:var(--error-color); font-size:1.2rem;">💀 GAME OVER! Final Score: ${totalScore.toLocaleString()}</span>`;
+          document.getElementById('restart-btn').style.display = 'block';
+        } else {
+          document.getElementById('next-btn').style.display = 'block';
+        }
       }
     }
 
@@ -621,6 +693,71 @@
       successfulGuessesCounter = 0;
       shuffleDeck();
       loadNextSong();
+    }
+
+    /* Native Canvas Confetti Engine */
+    let confettiParticles = [];
+    let confettiAnimId = null;
+
+    function initConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+
+    function triggerConfettiBurst() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      const colors = ['#00ffcc', '#ff5500', '#2ed573', '#ffab00', '#9b59b6', '#ffffff'];
+      
+      confettiParticles = [];
+      for (let i = 0; i < 100; i++) {
+        confettiParticles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 18,
+          vy: (Math.random() - 0.7) * 18,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.015 + 0.005
+        });
+      }
+
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+
+      function renderConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        confettiParticles.forEach(p => {
+          if (p.alpha > 0) {
+            active = true;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.3; // Gravity
+            p.alpha -= p.decay;
+
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+            ctx.restore();
+          }
+        });
+
+        if (active) {
+          confettiAnimId = requestAnimationFrame(renderConfetti);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      renderConfetti();
     }
   </script>
 </body>
