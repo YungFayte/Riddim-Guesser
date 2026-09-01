@@ -58,7 +58,7 @@
     .btn-skip:hover { background: #44495e; }
     .btn-next { background: #fff; display: none; margin-top: 15px; width: 100%; }
     .btn-restart { background: var(--error-color); color: #fff; display: none; margin-top: 15px; width: 100%; }
-    .btn-sc { background: var(--sc-orange); color: #fff; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
+    .btn-sc { background: var(--sc-orange); color: #fff; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; text-decoration: none; }
 
     .search-container { position: relative; margin-bottom: 15px; }
     input[type="text"] { width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #333748; color: #fff; border-radius: 6px; font-size: 1rem; outline: none; }
@@ -180,9 +180,10 @@
       
       <div class="points-breakdown" id="victory-points-msg">+0 PTS</div>
 
-      <button id="victory-sc-btn" onclick="handleSoundCloudClick()" class="btn btn-sc">
+      <!-- Real HTML Link Anchor: Guaranteed to Open without Popup Blocking -->
+      <a id="victory-sc-anchor" href="#" target="_blank" onclick="handleSoundCloudClick()" class="btn btn-sc">
         LISTEN ON SOUNDCLOUD 🎧
-      </button>
+      </a>
 
       <button class="btn btn-next" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext()">NEXT TRACK ➔</button>
     </div>
@@ -293,7 +294,7 @@
       if (fadeOutInterval) clearInterval(fadeOutInterval);
       let currentVol = 100;
       const stepMs = 40; 
-      const volStep = 100 / (1000 / stepMs); // 1.0s Total Duration
+      const volStep = 100 / (1000 / stepMs);
 
       fadeOutInterval = setInterval(() => {
         currentVol -= volStep;
@@ -315,15 +316,9 @@
       });
     }
 
-    /* SoundCloud Button Handler: Direct Synchronous Window Open */
+    /* SoundCloud Anchor Click Handler: Fades Audio & Auto-Nexts in Background */
     function handleSoundCloudClick() {
-      if (!currentSong || !currentSong.soundcloudUrl) return;
-      
-      // Direct call on user click guarantees non-blocked popup behavior
-      window.open(currentSong.soundcloudUrl, '_blank');
-      
       document.getElementById('victory-modal').style.display = 'none';
-      
       triggerFadeOutAndNext();
     }
 
@@ -668,6 +663,10 @@
       document.getElementById('victory-artist').innerText = currentSong.artist;
       document.getElementById('victory-points-msg').innerHTML = `+${points.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)${bonusMsg}`;
 
+      // Set URL directly on link anchor href
+      const scAnchor = document.getElementById('victory-sc-anchor');
+      scAnchor.href = currentSong.soundcloudUrl;
+
       const artImg = document.getElementById('victory-artwork');
       if (preloadedArtworkObj && preloadedArtworkObj.src) {
         artImg.src = preloadedArtworkObj.src;
@@ -763,22 +762,21 @@
       const centerY = canvas.height * 0.40;
 
       for (let i = 0; i < particleCount; i++) {
-        // Full 360-degree radial explosion physics
         const angle = Math.random() * Math.PI * 2;
-        const blastSpeed = Math.random() * 22 + 8; // High outward velocity
+        const blastSpeed = Math.random() * 22 + 8;
 
         confettiParticles.push({
           x: centerX,
           y: centerY,
           vx: Math.cos(angle) * blastSpeed,
-          vy: Math.sin(angle) * blastSpeed - 4, // Upward biased blast
+          vy: Math.sin(angle) * blastSpeed - 4,
           width: Math.random() * 10 + 6,
           height: Math.random() * 6 + 4,
           color: colors[Math.floor(Math.random() * colors.length)],
           rotation: Math.random() * 360,
           rotSpeed: (Math.random() - 0.5) * 8,
           alpha: 0.85,
-          decay: 0.0035, // ~3.5s Lifespan
+          decay: 0.0035,
           wobble: Math.random() * 20
         });
       }
@@ -796,7 +794,6 @@
             p.x += p.vx + Math.sin(p.wobble) * 1.5;
             p.y += p.vy;
             
-            // Physics transition: High initial explosive drag leading to light gravity float
             p.vy += 0.08;
             p.vx *= 0.94;
             p.rotation += p.rotSpeed;
