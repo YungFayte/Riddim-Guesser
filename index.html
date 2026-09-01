@@ -100,7 +100,7 @@
 
   <iframe id="sc-player" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&show_artwork=false" allow="autoplay"></iframe>
 
-  <script>
+<script>
     const INTERVALS = [0.4, 1.5, 3, 7, 15];
     const ATTEMPT_MULTIPLIERS = [5.0, 3.0, 2.0, 1.25, 1.0];
     const BASE_SCORE = 1000;
@@ -114,6 +114,7 @@
     };
 
     let songs = [];
+    let songDeck = []; // Our shuffled deck queue
     let currentSong = null;
     let currentAttempt = 0;
     let widget = null;
@@ -124,16 +125,38 @@
     let currentStreak = 0;
 
     window.onload = async () => {
-      widget = SC.Widget(document.getElementById('sc-player'));
-      
-      widget.bind(SC.Widget.Events.READY, () => {
-        isReady = true;
-      });
+      try {
+        widget = SC.Widget(document.getElementById('sc-player'));
+        
+        widget.bind(SC.Widget.Events.READY, () => {
+          isReady = true;
+        });
 
-      const response = await fetch('songs.json');
-      songs = await response.json();
-      loadNextSong();
+        const response = await fetch('songs.json');
+        if (!response.ok) throw new Error("Could not load songs.json");
+        songs = await response.json();
+        
+        if (songs.length > 0) {
+          shuffleDeck(); // Build and shuffle initial deck
+          loadNextSong();
+        } else {
+          document.getElementById('result-msg').innerText = "JSON file is empty.";
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('result-msg').innerText = "⚠️ Error loading songs.json file. Check JSON formatting.";
+        document.getElementById('result-msg').style.color = "var(--error-color)";
+      }
     };
+
+    // Fisher-Yates Deck Shuffle Algorithm
+    function shuffleDeck() {
+      songDeck = [...songs]; // Copy full song list
+      for (let i = songDeck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [songDeck[i], songDeck[j]] = [songDeck[j], songDeck[i]];
+      }
+    }
 
     function loadNextSong() {
       isGameOver = false;
@@ -150,24 +173,30 @@
       playBtn.style.display = 'block';
       updateTrackerUI();
 
-      currentSong = songs[Math.floor(Math.random() * songs.length)];
+      // If the deck is empty, reshuffle all songs
+      if (songDeck.length === 0) {
+        shuffleDeck();
+      }
+
+      // Draw the next unique song from the top of the deck
+      currentSong = songDeck.pop();
       
-      // Update Difficulty Tag UI
       const diff = currentSong.difficulty || "Easy";
+      const mult = DIFFICULTY_MULTIPLIERS[diff] || 1.0;
       const diffTag = document.getElementById('diff-tag');
-      diffTag.innerText = `Difficulty: ${diff} (${DIFFICULTY_MULTIPLIERS[diff]}x)`;
+      diffTag.innerText = `Difficulty: ${diff} (${mult}x)`;
       diffTag.className = `diff-badge diff-${diff.toLowerCase()}`;
 
       widget.load(currentSong.soundcloudUrl, {
         auto_play: false,
         show_artwork: false,
         callback: () => {
-          widget.seekTo(currentSong.startTime * 1000);
+          widget.seekTo(Math.floor(currentSong.startTime * 1000));
           setTimeout(() => {
             isReady = true;
             playBtn.innerText = '▶ PLAY AUDIO';
             playBtn.disabled = false;
-          }, 300);
+          }, 400);
         }
       });
     }
@@ -176,7 +205,7 @@
       if (!widget || isGameOver || !isReady) return;
       const duration = INTERVALS[currentAttempt];
       
-      widget.seekTo(currentSong.startTime * 1000);
+      widget.seekTo(Math.floor(currentSong.startTime * 1000));
       widget.play();
 
       setTimeout(() => {
@@ -221,9 +250,8 @@
       if (selectedSong.id === currentSong.id) {
         document.getElementById(`box-${currentAttempt}`).className = 'attempt-box success';
         
-        // Calculate points
         const diffName = currentSong.difficulty || "Easy";
-        const diffMult = DIFFICULTY_MULTIPLIERS[diffName];
+        const diffMult = DIFFICULTY_MULTIPLIERS[diffName] || 1.0;
         const attemptMult = ATTEMPT_MULTIPLIERS[currentAttempt];
         const pointsEarned = Math.round(BASE_SCORE * diffMult * attemptMult);
         
@@ -271,7 +299,7 @@
 
     function endRound() {
       isGameOver = true;
-      widget.seekTo(currentSong.startTime * 1000);
+      widget.seekTo(Math.floor(currentSong.startTime * 1000));
       widget.play();
       document.getElementById('next-btn').style.display = 'block';
     }
