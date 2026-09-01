@@ -78,5 +78,277 @@
     "soundcloudUrl": "https://soundcloud.com/chibsdubstep/chibs-sharingan",
     "startTime": 26.5,
     "difficulty": "Easy"
+  },
+  {
+    "id": 11,
+    "title": "Get Away",
+    "artist": "Jub",
+    "soundcloudUrl": "https://soundcloud.com/jubdubs/jub-get-away",
+    "startTime": 25,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 12,
+    "title": "Demon Master",
+    "artist": "Subfiltronik",
+    "soundcloudUrl": "https://soundcloud.com/subfiltronik/subfiltronik-demon-master",
+    "startTime": 26.6,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 13,
+    "title": "Somewhere",
+    "artist": "HOL!",
+    "soundcloudUrl": "https://soundcloud.com/hollmusic/hol-somewhere-out-now",
+    "startTime": 26.4,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 14,
+    "title": "Kream Team",
+    "artist": "Mad Dubz & Onara",
+    "soundcloudUrl": "https://soundcloud.com/maddubzmusic/mad-dubz-x-onara-kream-team",
+    "startTime": 38.3,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 15,
+    "title": "Big Daddy",
+    "artist": "Jub",
+    "soundcloudUrl": "https://soundcloud.com/jubdubs/big-daddy",
+    "startTime": 24.7,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 16,
+    "title": "U Sure Do (Jub Flip)",
+    "artist": "Strike",
+    "soundcloudUrl": "https://soundcloud.com/jubdubs/u-sure-do-flip",
+    "startTime": 25,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 17,
+    "title": "Gamble",
+    "artist": "Jub",
+    "soundcloudUrl": "https://soundcloud.com/jubdubs/jub-gamble-odio-records",
+    "startTime": 23.6,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 18,
+    "title": "Beans",
+    "artist": "Jub",
+    "soundcloudUrl": "https://soundcloud.com/jubdubs/beans",
+    "startTime": 25.7,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 19,
+    "title": "Industrial (Akirah Remix)",
+    "artist": "Ayonikz",
+    "soundcloudUrl": "https://soundcloud.com/bossmanakirah/ayonikz-industrial-akirah-free",
+    "startTime": 21.5,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 20,
+    "title": "Mortal Kombat",
+    "artist": "Skenz & Ecto",
+    "soundcloudUrl": "https://soundcloud.com/skenzdubz/ecto-x-skenz-mortal-kombat-clip",
+    "startTime": 24.85,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 21,
+    "title": "Lowest",
+    "artist": "Flix & Motus & Kill Feed",
+    "soundcloudUrl": "https://soundcloud.com/flix235/flix-x-motus-x-5ohoman-lowest-clip",
+    "startTime": 28.2,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 22,
+    "title": "Simon The Digger (Ayonikz 2018 VIP)",
+    "artist": "Jura",
+    "soundcloudUrl": "https://soundcloud.com/dj-ayonikz/jura-simon-the-digger-ayonikz-2018-vip",
+    "startTime": 27.45,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 23,
+    "title": "Dimension Succ",
+    "artist": "Amoons & Jub",
+    "soundcloudUrl": "https://soundcloud.com/jubdubs/amoons-jub-dimension-succ-clip",
+    "startTime": 26.55,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 24,
+    "title": "Shootahs",
+    "artist": "Mad Dubz",
+    "soundcloudUrl": "https://soundcloud.com/maddubzmusic/shootahs",
+    "startTime": 35.18,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 25,
+    "title": "Enchantress (feat. Jedwill)",
+    "artist": "Mad Dubz & Daeya",
+    "soundcloudUrl": "https://soundcloud.com/maddubzmusic/enchantress",
+    "startTime": 46.5,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 26,
+    "title": "Poppe",
+    "artist": "Automhate & Mad Dubz",
+    "soundcloudUrl": "https://soundcloud.com/automhate/automhate-x-mad-dubz-poppe",
+    "startTime": 50.45,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 27,
+    "title": "Drop It",
+    "artist": "Infekt & Mad Dubz",
+    "soundcloudUrl": "https://soundcloud.com/infektdubstep/infekt-mad-dubz-drop-it",
+    "startTime": 26.5,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 28,
+    "title": "Liebe",
+    "artist": "Mad Dubz",
+    "soundcloudUrl": "https://soundcloud.com/maddubzmusic/liebe",
+    "startTime": 24.5,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 29,
+    "title": "Spazzout",
+    "artist": "Subfiltronik",
+    "soundcloudUrl": "https://soundcloud.com/subfiltronik/subfiltronik-spazzout",
+    "startTime": 24,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 30,
+    "title": "Boundless",
+    "artist": "Infekt",
+    "soundcloudUrl": "https://soundcloud.com/infektdubstep/boundless",
+    "startTime": 24.9,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 31,
+    "title": "Da Pit (ft. Xae)",
+    "artist": "Infekt & Hamro",
+    "soundcloudUrl": "https://soundcloud.com/infektdubstep/da-pit",
+    "startTime": 23.2,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 32,
+    "title": "Rumble",
+    "artist": "Infekt",
+    "soundcloudUrl": "https://soundcloud.com/infektdubstep/rumble",
+    "startTime": 25.2,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 33,
+    "title": "Party Starter",
+    "artist": "Ubur & Aweminus & Yakz",
+    "soundcloudUrl": "https://soundcloud.com/uburdub/ubur-aweminus-yakz-party-starter",
+    "startTime": 49,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 34,
+    "title": "Kyiv",
+    "artist": "Akirah",
+    "soundcloudUrl": "https://soundcloud.com/bossmanakirah/akirah-kiev-free",
+    "startTime": 79.5,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 35,
+    "title": "Riddim 4 Dummies",
+    "artist": "Aweminus",
+    "soundcloudUrl": "https://soundcloud.com/blacklabelnsd/aweminus-riddim-4-dummies",
+    "startTime": 23.3,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 36,
+    "title": "Wonton Bass",
+    "artist": "Aweminus",
+    "soundcloudUrl": "https://soundcloud.com/aweminus/aweminus-wonton-bass",
+    "startTime": 25.6,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 37,
+    "title": "Sea Shanty",
+    "artist": "Aweminus",
+    "soundcloudUrl": "https://soundcloud.com/aweminus/aweminus-sea-shanty",
+    "startTime": 49.8,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 38,
+    "title": "Snappyfangles",
+    "artist": "Aweminus",
+    "soundcloudUrl": "https://soundcloud.com/aweminus/aweminus-spass-snappyfangles",
+    "startTime": 26.5,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 39,
+    "title": "Hate Me",
+    "artist": "Aweminus",
+    "soundcloudUrl": "https://soundcloud.com/aweminus/aweminus-hate-me",
+    "startTime": 51.65,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 40,
+    "title": "Frozen (Aweminus Remix)",
+    "artist": "Calcium",
+    "soundcloudUrl": "https://soundcloud.com/aweminus/calcium-frozen-aweminus-remix",
+    "startTime": 50.85,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 41,
+    "title": "Boosted",
+    "artist": "Infekt",
+    "soundcloudUrl": "https://soundcloud.com/infektdubstep/infekt-boosted",
+    "startTime": 24.1,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 42,
+    "title": "Projectile",
+    "artist": "Infekt",
+    "soundcloudUrl": "https://soundcloud.com/infektdubstep/infekt-projectile-clip",
+    "startTime": 26.65,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 43,
+    "title": "Simon The Digger (\"No Digging Allowed\" Bootleg)",
+    "artist": "Jura",
+    "soundcloudUrl": "https://soundcloud.com/nodubplates/jura-simon-the-digger-no-digging-allowed-bootleg",
+    "startTime": 25.37,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 44,
+    "title": "Devil (Inaktiv 'Paranoia' VIP)",
+    "artist": "AD & LV",
+    "soundcloudUrl": "https://soundcloud.com/inaktivity/ad-lv-devil-inaktiv-paranoia-vip-1",
+    "startTime": 26.4,
+    "difficulty": "Hard"
   }
 ]
