@@ -5,6 +5,7 @@
     "artist": "SPASS",
     "soundcloudUrl": "https://soundcloud.com/spassfun/mystical-powerzz",
     "startTime": 20
+    "difficulty": "Easy"
   },
   {
     "id": "2",
@@ -12,6 +13,7 @@
     "artist": "HOL!",
     "soundcloudUrl": "https://soundcloud.com/hollmusic/hol-country-riddim-final-version-for-release-1",
     "startTime": 23
+    "difficulty": "Easy"
   },
   {
     "id": "3",
@@ -19,6 +21,7 @@
     "artist": "Calcium, Kamiyada+, Mad Dubz",
     "soundcloudUrl": "https://soundcloud.com/bassweightrec/calcium-bullet-rain-ft-kamiyada-mad-dubz-remix",
     "startTime": 50
+    "difficulty": "Easy"
   },
   {
     "id": "4",
@@ -26,6 +29,7 @@
     "artist": "Akeos, Jub",
     "soundcloudUrl": "https://soundcloud.com/jubdubs/akeos-jub-inferno",
     "startTime": 24
+    "difficulty": "Medium"
   },
   {
     "id": "5",
@@ -33,5 +37,46 @@
     "artist": "Akirah",
     "soundcloudUrl": "https://soundcloud.com/bossmanakirah/akira-scottish-warlord",
     "startTime": 48
+    "difficulty": "Easy"
+  },
+  {
+    "id": "6",
+    "title": "Black Raptor",
+    "artist": "Getorix",
+    "soundcloudUrl": "https://soundcloud.com/getorix/getorix-black-raptor",
+    "startTime": 27
+    "difficulty": "Easy"
+  },
+  {
+    "id": "7",
+    "title": "Menticide",
+    "artist": "Samplifire, Yakz",
+    "soundcloudUrl": "https://soundcloud.com/disciple/menticide",
+    "startTime": 26
+    "difficulty": "Easy"
+  },
+  {
+    "id": "8",
+    "title": "Psycho Blockz",
+    "artist": "Subfiltronik",
+    "soundcloudUrl": "https://soundcloud.com/subfiltronik/subfiltronik-tm-psycho-blockz",
+    "startTime": 13.5
+    "difficulty": "Easy"
+  },
+  {
+    "id": "9",
+    "title": "Nu Anger",
+    "artist": "Aweminus",
+    "soundcloudUrl": "https://soundcloud.com/bassweightrec/aweminus-nu-anger-out-august-9th",
+    "startTime": 26.2
+    "difficulty": "Easy"
+  },
+  {
+    "id": "10",
+    "title": "Sharingan",
+    "artist": "Chibs",
+    "soundcloudUrl": "https://soundcloud.com/chibsdubstep/chibs-sharingan",
+    "startTime": 26.5
+    "difficulty": "Easy"
   }
 ]
