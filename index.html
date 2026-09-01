@@ -38,6 +38,12 @@
     .diff-expert { background: rgba(155, 89, 182, 0.2); color: #9b59b6; border: 1px solid #9b59b6; }
     .diff-impossible { background: rgba(230, 126, 34, 0.2); color: #e67e22; border: 1px solid #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.4); }
 
+    /* Audio Progress Bar & Debug Scrubber Container */
+    .audio-progress-container { width: 100%; height: 12px; background: #0d0e12; border: 1px solid #333748; border-radius: 6px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: default; }
+    .audio-progress-container.scrubber { cursor: pointer; border-color: var(--debug-color); }
+    .audio-progress-bar { width: 0%; height: 100%; background: var(--accent-color); transition: width 0.05s linear; }
+    .audio-progress-container.scrubber .audio-progress-bar { background: var(--debug-color); }
+
     .controls-row { display: flex; gap: 10px; margin-bottom: 15px; }
     .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; }
     .btn:active { transform: scale(0.98); }
@@ -71,8 +77,8 @@
 
   <div class="container">
     <div class="test-mode-banner" id="test-banner">
-      ⚠️ DEBUG MODE: TEST TRACK LOADED
-      <br>Exact Current Timestamp: <span class="timestamp-finder" id="live-time">0.00s</span>
+      ⚠️ DEBUG MODE: SCRUBBER UNLOCKED
+      <br>Exact Timestamp: <span class="timestamp-finder" id="live-time">0.00s</span>
     </div>
 
     <h1>BASS GUESSER</h1>
@@ -106,6 +112,11 @@
       <div class="attempt-box" id="box-2">3s</div>
       <div class="attempt-box" id="box-3">8s</div>
       <div class="attempt-box" id="box-4">16s</div>
+    </div>
+
+    <!-- Live Audio Meter & Interactive Debug Scrubber -->
+    <div class="audio-progress-container" id="progress-container" onclick="handleScrubberClick(event)">
+      <div class="audio-progress-bar" id="progress-bar"></div>
     </div>
 
     <div class="controls-row">
@@ -147,14 +158,16 @@
     let isGameOver = false;
     let isReady = false;
     let isTestMode = false;
-    let debugTimerInterval = null;
+    
+    let playbackInterval = null;
+    let songDurationMs = 0;
 
     // Player Resources
     let lives = 3;
     let skips = 3;
     let totalScore = 0;
     let currentStreak = 0;
-    let successfulGuessesCounter = 0; // Tracks progress toward next skip bonus
+    let successfulGuessesCounter = 0;
 
     window.onload = async () => {
       try {
@@ -197,26 +210,16 @@
       }
       isTestMode = true;
       document.getElementById('test-banner').style.display = 'block';
-      startDebugTimer();
+      document.getElementById('progress-container').classList.add('scrubber');
       loadNextSong(found);
-    }
-
-    function startDebugTimer() {
-      if (debugTimerInterval) clearInterval(debugTimerInterval);
-      debugTimerInterval = setInterval(() => {
-        if (widget && isTestMode) {
-          widget.getPosition((ms) => {
-            const seconds = (ms / 1000).toFixed(2);
-            document.getElementById('live-time').innerText = `${seconds}s`;
-          });
-        }
-      }, 100);
     }
 
     function loadNextSong(forcedSong = null) {
       isGameOver = false;
       isReady = false;
       currentAttempt = 0;
+      stopMeterTracking();
+      resetProgressBar();
       
       const playBtn = document.getElementById('play-btn');
       playBtn.innerText = '⏳ LOADING AUDIO...';
@@ -237,7 +240,7 @@
       } else {
         if (!isTestMode) {
           document.getElementById('test-banner').style.display = 'none';
-          if (debugTimerInterval) clearInterval(debugTimerInterval);
+          document.getElementById('progress-container').classList.remove('scrubber');
         }
         
         if (songDeck.length === 0) {
@@ -256,7 +259,17 @@
         auto_play: false,
         show_artwork: false,
         callback: () => {
-          widget.seekTo(Math.floor(currentSong.startTime * 1000));
+          widget.getDuration((dur) => {
+            songDurationMs = dur;
+          });
+
+          // In standard gameplay, pre-seek to start time
+          if (!isTestMode) {
+            widget.seekTo(Math.floor(currentSong.startTime * 1000));
+          } else {
+            widget.seekTo(0);
+          }
+
           setTimeout(() => {
             isReady = true;
             playBtn.innerText = '▶ PLAY AUDIO';
@@ -267,17 +280,83 @@
     }
 
     function playSnippet() {
-      if (!widget || isGameOver || !isReady) return;
-      const duration = INTERVALS[currentAttempt];
+      if (!widget || !isReady) return;
       
-      widget.seekTo(Math.floor(currentSong.startTime * 1000));
+      // DEBUG MODE: Full Playback & Scrubber
+      if (isTestMode) {
+        widget.play();
+        startMeterTracking();
+        return;
+      }
+
+      // GAMEPLAY MODE: Snippet Audio Interval Meter
+      if (isGameOver) return;
+      const maxIntervalSec = INTERVALS[currentAttempt];
+      const startMs = Math.floor(currentSong.startTime * 1000);
+      const endMs = startMs + (maxIntervalSec * 1000);
+
+      widget.seekTo(startMs);
       widget.play();
+      startMeterTracking(startMs, endMs);
 
       setTimeout(() => {
-        if (!isGameOver) {
+        if (!isGameOver && !isTestMode) {
           widget.pause();
+          stopMeterTracking();
+          resetProgressBar();
         }
-      }, duration * 1000);
+      }, maxIntervalSec * 1000);
+    }
+
+    // Dynamic Live Meter & Scrubber Logic
+    function startMeterTracking(startMs = 0, endMs = 0) {
+      stopMeterTracking();
+      playbackInterval = setInterval(() => {
+        widget.getPosition((currentMs) => {
+          if (isTestMode) {
+            // Debug Scrubber Tracking (0 to Full Song Length)
+            const seconds = (currentMs / 1000).toFixed(2);
+            document.getElementById('live-time').innerText = `${seconds}s`;
+            if (songDurationMs > 0) {
+              const pct = (currentMs / songDurationMs) * 100;
+              document.getElementById('progress-bar').style.width = `${Math.min(pct, 100)}%`;
+            }
+          } else {
+            // Gameplay Snippet Meter Tracking (0 to 100% of current interval)
+            const elapsed = currentMs - startMs;
+            const totalSnippetMs = endMs - startMs;
+            if (totalSnippetMs > 0) {
+              const pct = (elapsed / totalSnippetMs) * 100;
+              document.getElementById('progress-bar').style.width = `${Math.max(0, Math.min(pct, 100))}%`;
+            }
+          }
+        });
+      }, 30);
+    }
+
+    function stopMeterTracking() {
+      if (playbackInterval) {
+        clearInterval(playbackInterval);
+        playbackInterval = null;
+      }
+    }
+
+    function resetProgressBar() {
+      document.getElementById('progress-bar').style.width = '0%';
+    }
+
+    // Scrubber Click Handler (Debug Mode Only)
+    function handleScrubberClick(event) {
+      if (!isTestMode || !songDurationMs || !widget) return;
+      const container = document.getElementById('progress-container');
+      const rect = container.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const pct = clickX / rect.width;
+      const targetMs = Math.floor(pct * songDurationMs);
+      
+      widget.seekTo(targetMs);
+      document.getElementById('progress-bar').style.width = `${pct * 100}%`;
+      document.getElementById('live-time').innerText = `${(targetMs / 1000).toFixed(2)}s`;
     }
 
     function skipTrack() {
@@ -345,7 +424,6 @@
           currentStreak++;
           successfulGuessesCounter++;
 
-          // Award bonus skip every 10 correct songs
           let skipBonusMsg = "";
           if (successfulGuessesCounter % 10 === 0) {
             skips++;
@@ -381,7 +459,6 @@
     }
 
     function updateDashboardUI() {
-      // Format Hearts for Lives
       let heartsStr = "";
       for (let i = 0; i < 3; i++) {
         heartsStr += (i < lives) ? "❤️" : "🖤";
@@ -407,6 +484,7 @@
 
     function endRound(isWin) {
       isGameOver = true;
+      stopMeterTracking();
       widget.seekTo(Math.floor(currentSong.startTime * 1000));
       widget.play();
       document.getElementById('skip-btn').disabled = true;
