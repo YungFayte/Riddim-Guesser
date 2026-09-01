@@ -13,21 +13,23 @@
       --text-color: #ffffff;
       --muted-color: #a0a5b5;
       --error-color: #ff4757;
+      --debug-color: #e36414;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-    .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #262936; }
+    .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #262936; position: relative; }
     h1 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
     p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
 
-    /* Scoreboard Dashboard */
+    /* Test Mode Banner */
+    .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 6px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; }
+
     .scoreboard { display: flex; justify-content: space-between; background: #0d0e12; padding: 12px 18px; border-radius: 8px; border: 1px solid #262936; margin-bottom: 15px; }
     .score-stat { text-align: center; }
     .score-label { font-size: 0.75rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px; }
     .score-val { font-size: 1.2rem; font-weight: bold; color: var(--accent-color); }
 
-    /* Difficulty Tag */
     .diff-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
     .diff-easy { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid #2ed573; }
     .diff-medium { background: rgba(255, 171, 0, 0.2); color: #ffab00; border: 1px solid #ffab00; }
@@ -37,6 +39,7 @@
 
     .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; margin-bottom: 15px; }
     .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-next { background: #fff; display: none; margin-top: 15px; }
 
     .search-container { position: relative; margin-bottom: 15px; }
@@ -46,6 +49,8 @@
     .dropdown { position: absolute; width: 100%; background: #1f222e; border: 1px solid #333748; border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 10; display: none; text-align: left; }
     .dropdown-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #2a2e3d; }
     .dropdown-item:hover { background: var(--accent-color); color: #000; }
+    .dropdown-item.debug { background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border-bottom: 1px solid var(--debug-color); }
+    .dropdown-item.debug:hover { background: var(--debug-color); color: #fff; }
 
     .attempts-tracker { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; }
     .attempt-box { width: 45px; height: 35px; border: 1px solid #333748; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 4px; color: var(--muted-color); }
@@ -60,10 +65,11 @@
 <body>
 
   <div class="container">
+    <div class="test-mode-banner" id="test-banner">⚠️ DEBUG MODE: TEST TRACK LOADED (SCORE PAUSED)</div>
+
     <h1>BASS GUESSER</h1>
     <p class="subtitle">Dubstep & Riddim Edition</p>
 
-    <!-- Score Dashboard -->
     <div class="scoreboard">
       <div class="score-stat">
         <div class="score-label">Total Score</div>
@@ -75,15 +81,14 @@
       </div>
     </div>
 
-    <!-- Active Track Difficulty Tag -->
     <div id="diff-tag" class="diff-badge diff-easy">Difficulty: Easy</div>
 
     <div class="attempts-tracker">
-      <div class="attempt-box active" id="box-0">0.4s</div>
+      <div class="attempt-box active" id="box-0">0.5s</div>
       <div class="attempt-box" id="box-1">1.5s</div>
       <div class="attempt-box" id="box-2">3s</div>
-      <div class="attempt-box" id="box-3">7s</div>
-      <div class="attempt-box" id="box-4">15s</div>
+      <div class="attempt-box" id="box-3">8s</div>
+      <div class="attempt-box" id="box-4">16s</div>
     </div>
 
     <button class="btn" id="play-btn" onclick="playSnippet()">▶ PLAY AUDIO</button>
@@ -100,8 +105,9 @@
 
   <iframe id="sc-player" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&show_artwork=false" allow="autoplay"></iframe>
 
-<script>
-    const INTERVALS = [0.4, 1.5, 3, 7, 15];
+  <script>
+    // Updated intervals per your request: 0.5s, 1.5s, 3s, 8s, 16s
+    const INTERVALS = [0.5, 1.5, 3, 8, 16];
     const ATTEMPT_MULTIPLIERS = [5.0, 3.0, 2.0, 1.25, 1.0];
     const BASE_SCORE = 1000;
 
@@ -114,12 +120,13 @@
     };
 
     let songs = [];
-    let songDeck = []; // Our shuffled deck queue
+    let songDeck = [];
     let currentSong = null;
     let currentAttempt = 0;
     let widget = null;
     let isGameOver = false;
     let isReady = false;
+    let isTestMode = false; // Flag to check if song was manually forced
 
     let totalScore = 0;
     let currentStreak = 0;
@@ -137,7 +144,7 @@
         songs = await response.json();
         
         if (songs.length > 0) {
-          shuffleDeck(); // Build and shuffle initial deck
+          shuffleDeck();
           loadNextSong();
         } else {
           document.getElementById('result-msg').innerText = "JSON file is empty.";
@@ -149,16 +156,27 @@
       }
     };
 
-    // Fisher-Yates Deck Shuffle Algorithm
     function shuffleDeck() {
-      songDeck = [...songs]; // Copy full song list
+      songDeck = [...songs];
       for (let i = songDeck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [songDeck[i], songDeck[j]] = [songDeck[j], songDeck[i]];
       }
     }
 
-    function loadNextSong() {
+    // Force load a specific song by ID for admin testing
+    function forceLoadSongById(targetId) {
+      const found = songs.find(s => String(s.id) === String(targetId));
+      if (!found) {
+        alert(`Song ID "${targetId}" not found in songs.json!`);
+        return;
+      }
+      isTestMode = true;
+      document.getElementById('test-banner').style.display = 'block';
+      loadNextSong(found);
+    }
+
+    function loadNextSong(forcedSong = null) {
       isGameOver = false;
       isReady = false;
       currentAttempt = 0;
@@ -169,17 +187,22 @@
 
       document.getElementById('result-msg').innerText = '';
       document.getElementById('guess-input').value = '';
+      document.getElementById('dropdown').style.display = 'none';
       document.getElementById('next-btn').style.display = 'none';
       playBtn.style.display = 'block';
       updateTrackerUI();
 
-      // If the deck is empty, reshuffle all songs
-      if (songDeck.length === 0) {
-        shuffleDeck();
+      if (forcedSong) {
+        currentSong = forcedSong;
+      } else {
+        isTestMode = false;
+        document.getElementById('test-banner').style.display = 'none';
+        
+        if (songDeck.length === 0) {
+          shuffleDeck();
+        }
+        currentSong = songDeck.pop();
       }
-
-      // Draw the next unique song from the top of the deck
-      currentSong = songDeck.pop();
       
       const diff = currentSong.difficulty || "Easy";
       const mult = DIFFICULTY_MULTIPLIERS[diff] || 1.0;
@@ -216,7 +239,7 @@
     }
 
     function handleSearch() {
-      const input = document.getElementById('guess-input').value.toLowerCase();
+      const input = document.getElementById('guess-input').value.trim();
       const dropdown = document.getElementById('dropdown');
       dropdown.innerHTML = '';
 
@@ -225,8 +248,21 @@
         return;
       }
 
+      // Check for Admin Command (id:X)
+      if (input.toLowerCase().startsWith('id:')) {
+        const queryId = input.substring(3).trim();
+        dropdown.style.display = 'block';
+        const item = document.createElement('div');
+        item.className = 'dropdown-item debug';
+        item.innerText = `🛠️ DEV COMMAND: Force Load Song ID #${queryId}`;
+        item.onclick = () => forceLoadSongById(queryId);
+        dropdown.appendChild(item);
+        return;
+      }
+
       const matches = songs.filter(s => 
-        s.title.toLowerCase().includes(input) || s.artist.toLowerCase().includes(input)
+        s.title.toLowerCase().includes(input.toLowerCase()) || 
+        s.artist.toLowerCase().includes(input.toLowerCase())
       );
 
       if (matches.length > 0) {
@@ -255,11 +291,15 @@
         const attemptMult = ATTEMPT_MULTIPLIERS[currentAttempt];
         const pointsEarned = Math.round(BASE_SCORE * diffMult * attemptMult);
         
-        totalScore += pointsEarned;
-        currentStreak++;
-        updateScoreboard();
-
-        document.getElementById('result-msg').innerHTML = `🎉 CORRECT!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:#00ffcc; font-size:0.9rem;">+${pointsEarned.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)</span>`;
+        if (!isTestMode) {
+          totalScore += pointsEarned;
+          currentStreak++;
+          updateScoreboard();
+          document.getElementById('result-msg').innerHTML = `🎉 CORRECT!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:#00ffcc; font-size:0.9rem;">+${pointsEarned.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)</span>`;
+        } else {
+          document.getElementById('result-msg').innerHTML = `🎉 CORRECT (TEST MODE)!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:var(--debug-color); font-size:0.9rem;">(Scores bypass logged in Debug Mode)</span>`;
+        }
+        
         document.getElementById('result-msg').style.color = 'var(--accent-color)';
         endRound();
       } else {
@@ -267,8 +307,10 @@
         currentAttempt++;
 
         if (currentAttempt >= INTERVALS.length) {
-          currentStreak = 0;
-          updateScoreboard();
+          if (!isTestMode) {
+            currentStreak = 0;
+            updateScoreboard();
+          }
 
           document.getElementById('result-msg').innerHTML = `❌ GAME OVER!<br>Track was: <strong>${currentSong.artist} - ${currentSong.title}</strong>`;
           document.getElementById('result-msg').style.color = 'var(--error-color)';
