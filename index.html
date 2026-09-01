@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Riddim Guesser</title>
+  <title>Riddim / Dubstep Guesser</title>
   <script src="https://w.soundcloud.com/player/api.js"></script>
   <style>
     :root {
@@ -19,10 +19,22 @@
     body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
     .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #262936; }
     h1 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-    p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 20px; }
+    p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
 
-    .timer-display { font-size: 1.1rem; color: var(--accent-color); margin-bottom: 15px; font-weight: bold; }
-    
+    /* Scoreboard Dashboard */
+    .scoreboard { display: flex; justify-content: space-between; background: #0d0e12; padding: 12px 18px; border-radius: 8px; border: 1px solid #262936; margin-bottom: 15px; }
+    .score-stat { text-align: center; }
+    .score-label { font-size: 0.75rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px; }
+    .score-val { font-size: 1.2rem; font-weight: bold; color: var(--accent-color); }
+
+    /* Difficulty Tag */
+    .diff-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
+    .diff-easy { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid #2ed573; }
+    .diff-medium { background: rgba(255, 171, 0, 0.2); color: #ffab00; border: 1px solid #ffab00; }
+    .diff-hard { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
+    .diff-expert { background: rgba(155, 89, 182, 0.2); color: #9b59b6; border: 1px solid #9b59b6; }
+    .diff-impossible { background: rgba(230, 126, 34, 0.2); color: #e67e22; border: 1px solid #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.4); }
+
     .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; margin-bottom: 15px; }
     .btn:active { transform: scale(0.98); }
     .btn-next { background: #fff; display: none; margin-top: 15px; }
@@ -35,13 +47,13 @@
     .dropdown-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #2a2e3d; }
     .dropdown-item:hover { background: var(--accent-color); color: #000; }
 
-    .attempts-tracker { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+    .attempts-tracker { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; }
     .attempt-box { width: 45px; height: 35px; border: 1px solid #333748; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 4px; color: var(--muted-color); }
     .attempt-box.active { border-color: var(--accent-color); color: var(--accent-color); font-weight: bold; }
     .attempt-box.fail { background: var(--error-color); color: #fff; border-color: var(--error-color); }
     .attempt-box.success { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
-    .result-msg { font-size: 1.1rem; font-weight: bold; margin-top: 15px; min-height: 25px; }
+    .result-msg { font-size: 1rem; font-weight: bold; margin-top: 15px; min-height: 25px; line-height: 1.4; }
     #sc-player { display: none; }
   </style>
 </head>
@@ -51,12 +63,27 @@
     <h1>BASS GUESSER</h1>
     <p class="subtitle">Dubstep & Riddim Edition</p>
 
+    <!-- Score Dashboard -->
+    <div class="scoreboard">
+      <div class="score-stat">
+        <div class="score-label">Total Score</div>
+        <div class="score-val" id="total-score">0</div>
+      </div>
+      <div class="score-stat">
+        <div class="score-label">Current Streak</div>
+        <div class="score-val" id="current-streak">0 🔥</div>
+      </div>
+    </div>
+
+    <!-- Active Track Difficulty Tag -->
+    <div id="diff-tag" class="diff-badge diff-easy">Difficulty: Easy</div>
+
     <div class="attempts-tracker">
-      <div class="attempt-box active" id="box-0">0.5s</div>
+      <div class="attempt-box active" id="box-0">0.4s</div>
       <div class="attempt-box" id="box-1">1.5s</div>
       <div class="attempt-box" id="box-2">3s</div>
-      <div class="attempt-box" id="box-3">8s</div>
-      <div class="attempt-box" id="box-4">16s</div>
+      <div class="attempt-box" id="box-3">7s</div>
+      <div class="attempt-box" id="box-4">15s</div>
     </div>
 
     <button class="btn" id="play-btn" onclick="playSnippet()">▶ PLAY AUDIO</button>
@@ -73,8 +100,19 @@
 
   <iframe id="sc-player" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&show_artwork=false" allow="autoplay"></iframe>
 
-<script>
-    let INTERVALS = [0.5, 1.5, 3, 8, 16]; // Your updated intervals
+  <script>
+    const INTERVALS = [0.4, 1.5, 3, 7, 15];
+    const ATTEMPT_MULTIPLIERS = [5.0, 3.0, 2.0, 1.25, 1.0];
+    const BASE_SCORE = 1000;
+
+    const DIFFICULTY_MULTIPLIERS = {
+      "Easy": 1.0,
+      "Medium": 1.25,
+      "Hard": 1.5,
+      "Expert": 2.0,
+      "Impossible": 3.0
+    };
+
     let songs = [];
     let currentSong = null;
     let currentAttempt = 0;
@@ -82,10 +120,12 @@
     let isGameOver = false;
     let isReady = false;
 
+    let totalScore = 0;
+    let currentStreak = 0;
+
     window.onload = async () => {
       widget = SC.Widget(document.getElementById('sc-player'));
       
-      // Bind SoundCloud Ready Event
       widget.bind(SC.Widget.Events.READY, () => {
         isReady = true;
       });
@@ -112,7 +152,12 @@
 
       currentSong = songs[Math.floor(Math.random() * songs.length)];
       
-      // Load track and immediately seek to start time once buffered
+      // Update Difficulty Tag UI
+      const diff = currentSong.difficulty || "Easy";
+      const diffTag = document.getElementById('diff-tag');
+      diffTag.innerText = `Difficulty: ${diff} (${DIFFICULTY_MULTIPLIERS[diff]}x)`;
+      diffTag.className = `diff-badge diff-${diff.toLowerCase()}`;
+
       widget.load(currentSong.soundcloudUrl, {
         auto_play: false,
         show_artwork: false,
@@ -131,7 +176,6 @@
       if (!widget || isGameOver || !isReady) return;
       const duration = INTERVALS[currentAttempt];
       
-      // Seek and play seamlessly
       widget.seekTo(currentSong.startTime * 1000);
       widget.play();
 
@@ -176,7 +220,18 @@
 
       if (selectedSong.id === currentSong.id) {
         document.getElementById(`box-${currentAttempt}`).className = 'attempt-box success';
-        document.getElementById('result-msg').innerText = `🎉 CORRECT! ${currentSong.artist} - ${currentSong.title}`;
+        
+        // Calculate points
+        const diffName = currentSong.difficulty || "Easy";
+        const diffMult = DIFFICULTY_MULTIPLIERS[diffName];
+        const attemptMult = ATTEMPT_MULTIPLIERS[currentAttempt];
+        const pointsEarned = Math.round(BASE_SCORE * diffMult * attemptMult);
+        
+        totalScore += pointsEarned;
+        currentStreak++;
+        updateScoreboard();
+
+        document.getElementById('result-msg').innerHTML = `🎉 CORRECT!<br><strong>${currentSong.artist} - ${currentSong.title}</strong><br><span style="color:#00ffcc; font-size:0.9rem;">+${pointsEarned.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)</span>`;
         document.getElementById('result-msg').style.color = 'var(--accent-color)';
         endRound();
       } else {
@@ -184,13 +239,21 @@
         currentAttempt++;
 
         if (currentAttempt >= INTERVALS.length) {
-          document.getElementById('result-msg').innerText = `❌ GAME OVER! Track was: ${currentSong.artist} - ${currentSong.title}`;
+          currentStreak = 0;
+          updateScoreboard();
+
+          document.getElementById('result-msg').innerHTML = `❌ GAME OVER!<br>Track was: <strong>${currentSong.artist} - ${currentSong.title}</strong>`;
           document.getElementById('result-msg').style.color = 'var(--error-color)';
           endRound();
         } else {
           updateTrackerUI();
         }
       }
+    }
+
+    function updateScoreboard() {
+      document.getElementById('total-score').innerText = totalScore.toLocaleString();
+      document.getElementById('current-streak').innerText = `${currentStreak} 🔥`;
     }
 
     function updateTrackerUI() {
