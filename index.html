@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riddim Guesser</title>
+  <script src="https://w.soundcloud.com/player/api.js"></script>
+  <style>
+    :root {
+      --bg-color: #0d0e12;
+      --card-bg: #16181f;
+      --accent-color: #00ffcc;
+      --text-color: #ffffff;
+      --muted-color: #a0a5b5;
+      --error-color: #ff4757;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
+    .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #262936; }
+    h1 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+    p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 20px; }
+
+    .timer-display { font-size: 1.1rem; color: var(--accent-color); margin-bottom: 15px; font-weight: bold; }
+    
+    .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; margin-bottom: 15px; }
+    .btn:active { transform: scale(0.98); }
+    .btn-next { background: #fff; display: none; margin-top: 15px; }
+
+    .search-container { position: relative; margin-bottom: 15px; }
+    input[type="text"] { width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #333748; color: #fff; border-radius: 6px; font-size: 1rem; outline: none; }
+    input[type="text"]:focus { border-color: var(--accent-color); }
+    
+    .dropdown { position: absolute; width: 100%; background: #1f222e; border: 1px solid #333748; border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 10; display: none; text-align: left; }
+    .dropdown-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #2a2e3d; }
+    .dropdown-item:hover { background: var(--accent-color); color: #000; }
+
+    .attempts-tracker { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+    .attempt-box { width: 45px; height: 35px; border: 1px solid #333748; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 4px; color: var(--muted-color); }
+    .attempt-box.active { border-color: var(--accent-color); color: var(--accent-color); font-weight: bold; }
+    .attempt-box.fail { background: var(--error-color); color: #fff; border-color: var(--error-color); }
+    .attempt-box.success { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
+
+    .result-msg { font-size: 1.1rem; font-weight: bold; margin-top: 15px; min-height: 25px; }
+    #sc-player { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>BASS GUESSER</h1>
+    <p class="subtitle">Dubstep & Riddim Edition</p>
+
+    <div class="attempts-tracker">
+      <div class="attempt-box active" id="box-0">0.1s</div>
+      <div class="attempt-box" id="box-1">1s</div>
+      <div class="attempt-box" id="box-2">2s</div>
+      <div class="attempt-box" id="box-3">8s</div>
+      <div class="attempt-box" id="box-4">16s</div>
+    </div>
+
+    <button class="btn" id="play-btn" onclick="playSnippet()">▶ PLAY AUDIO</button>
+
+    <div class="search-container">
+      <input type="text" id="guess-input" placeholder="Search artist or track title..." oninput="handleSearch()">
+      <div class="dropdown" id="dropdown"></div>
+    </div>
+
+    <button class="btn btn-next" id="next-btn" onclick="loadNextSong()">NEXT TRACK ➔</button>
+
+    <div class="result-msg" id="result-msg"></div>
+  </div>
+
+  <iframe id="sc-player" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&show_artwork=false" allow="autoplay"></iframe>
+
+  <script>
+    const INTERVALS = [0.1, 1, 2, 8, 16];
+    let songs = [];
+    let currentSong = null;
+    let currentAttempt = 0;
+    let widget = null;
+    let isGameOver = false;
+
+    window.onload = async () => {
+      widget = SC.Widget(document.getElementById('sc-player'));
+      const response = await fetch('songs.json');
+      songs = await response.json();
+      loadNextSong();
+    };
+
+    function loadNextSong() {
+      isGameOver = false;
+      currentAttempt = 0;
+      document.getElementById('result-msg').innerText = '';
+      document.getElementById('guess-input').value = '';
+      document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('play-btn').style.display = 'block';
+      updateTrackerUI();
+
+      currentSong = songs[Math.floor(Math.random() * songs.length)];
+      widget.load(currentSong.soundcloudUrl, { auto_play: false, show_artwork: false });
+    }
+
+    function playSnippet() {
+      if (!widget || isGameOver) return;
+      const duration = INTERVALS[currentAttempt];
+      widget.seekTo(currentSong.startTime * 1000);
+      widget.play();
+
+      setTimeout(() => {
+        if (!isGameOver) {
+          widget.pause();
+        }
+      }, duration * 1000);
+    }
+
+    function handleSearch() {
+      const input = document.getElementById('guess-input').value.toLowerCase();
+      const dropdown = document.getElementById('dropdown');
+      dropdown.innerHTML = '';
+
+      if (input.length < 2 || isGameOver) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      const matches = songs.filter(s => 
+        s.title.toLowerCase().includes(input) || s.artist.toLowerCase().includes(input)
+      );
+
+      if (matches.length > 0) {
+        dropdown.style.display = 'block';
+        matches.forEach(s => {
+          const item = document.createElement('div');
+          item.className = 'dropdown-item';
+          item.innerText = `${s.artist} - ${s.title}`;
+          item.onclick = () => submitGuess(s);
+          dropdown.appendChild(item);
+        });
+      } else {
+        dropdown.style.display = 'none';
+      }
+    }
+
+    function submitGuess(selectedSong) {
+      document.getElementById('dropdown').style.display = 'none';
+      document.getElementById('guess-input').value = '';
+
+      if (selectedSong.id === currentSong.id) {
+        document.getElementById(`box-${currentAttempt}`).className = 'attempt-box success';
+        document.getElementById('result-msg').innerText = `🎉 CORRECT! ${currentSong.artist} - ${currentSong.title}`;
+        document.getElementById('result-msg').style.color = 'var(--accent-color)';
+        endRound();
+      } else {
+        document.getElementById(`box-${currentAttempt}`).className = 'attempt-box fail';
+        currentAttempt++;
+
+        if (currentAttempt >= INTERVALS.length) {
+          document.getElementById('result-msg').innerText = `❌ GAME OVER! Track was: ${currentSong.artist} - ${currentSong.title}`;
+          document.getElementById('result-msg').style.color = 'var(--error-color)';
+          endRound();
+        } else {
+          updateTrackerUI();
+        }
+      }
+    }
+
+    function updateTrackerUI() {
+      for (let i = 0; i < INTERVALS.length; i++) {
+        const box = document.getElementById(`box-${i}`);
+        if (i < currentAttempt) {
+          box.className = 'attempt-box fail';
+        } else if (i === currentAttempt) {
+          box.className = 'attempt-box active';
+        } else {
+          box.className = 'attempt-box';
+        }
+      }
+    }
+
+    function endRound() {
+      isGameOver = true;
+      widget.seekTo(currentSong.startTime * 1000);
+      widget.play();
+      document.getElementById('next-btn').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
