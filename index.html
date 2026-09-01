@@ -286,14 +286,14 @@
       }
     }
 
-    /* 2-Second Smooth Volume Fade-Out Engine */
+    /* 1.0-Second Volume Fade-Out Engine */
     function fadeOutAudio(onCompleteCallback) {
       if (!widget) { if (onCompleteCallback) onCompleteCallback(); return; }
       
       if (fadeOutInterval) clearInterval(fadeOutInterval);
       let currentVol = 100;
-      const stepMs = 50;
-      const volStep = 100 / (2000 / stepMs);
+      const stepMs = 40; 
+      const volStep = 100 / (1000 / stepMs); // 1.0s Total Duration
 
       fadeOutInterval = setInterval(() => {
         currentVol -= volStep;
@@ -315,17 +315,15 @@
       });
     }
 
-    /* SoundCloud Link Handler: Instantly Opens Tab & Queues Next Song */
+    /* SoundCloud Button Handler: Direct Synchronous Window Open */
     function handleSoundCloudClick() {
       if (!currentSong || !currentSong.soundcloudUrl) return;
       
-      // 1. Open SoundCloud link immediately in a new tab (bypasses browser popup blockers)
+      // Direct call on user click guarantees non-blocked popup behavior
       window.open(currentSong.soundcloudUrl, '_blank');
       
-      // 2. Close victory window
       document.getElementById('victory-modal').style.display = 'none';
       
-      // 3. Fade out audio & load the next track so it's ready when the player returns
       triggerFadeOutAndNext();
     }
 
@@ -739,7 +737,7 @@
       loadNextSong();
     }
 
-    /* Slow Piñata-Style Widescreen Confetti Engine */
+    /* Explosive Center-Outward Radial Confetti Engine */
     let confettiParticles = [];
     let confettiAnimId = null;
 
@@ -759,25 +757,28 @@
       const colors = ['#00ffcc', '#ff0055', '#ffe600', '#00d2ff', '#ff00ff', '#ffffff'];
       
       confettiParticles = [];
-      const particleCount = 200;
+      const particleCount = 220;
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height * 0.40;
 
       for (let i = 0; i < particleCount; i++) {
-        // Broad initial spawn spanning 80% of screen width
-        const spawnX = (canvas.width * 0.1) + (Math.random() * (canvas.width * 0.8));
-        const spawnY = canvas.height * 0.25;
+        // Full 360-degree radial explosion physics
+        const angle = Math.random() * Math.PI * 2;
+        const blastSpeed = Math.random() * 22 + 8; // High outward velocity
 
         confettiParticles.push({
-          x: spawnX,
-          y: spawnY,
-          vx: (Math.random() - 0.5) * 8, // Soft side drift
-          vy: Math.random() * -4 - 1,    // Light initial upward flutter
+          x: centerX,
+          y: centerY,
+          vx: Math.cos(angle) * blastSpeed,
+          vy: Math.sin(angle) * blastSpeed - 4, // Upward biased blast
           width: Math.random() * 10 + 6,
           height: Math.random() * 6 + 4,
           color: colors[Math.floor(Math.random() * colors.length)],
           rotation: Math.random() * 360,
-          rotSpeed: (Math.random() - 0.5) * 4,
-          alpha: 0.80,
-          decay: 0.0035, // ~3.5 to 4 second slow piñata decay
+          rotSpeed: (Math.random() - 0.5) * 8,
+          alpha: 0.85,
+          decay: 0.0035, // ~3.5s Lifespan
           wobble: Math.random() * 20
         });
       }
@@ -792,10 +793,12 @@
           if (p.alpha > 0) {
             active = true;
             p.wobble += 0.04;
-            p.x += p.vx + Math.sin(p.wobble) * 1.5; // Feathered paper flutter
+            p.x += p.vx + Math.sin(p.wobble) * 1.5;
             p.y += p.vy;
-            p.vy += 0.06; // Super light gravity float
-            p.vx *= 0.98;
+            
+            // Physics transition: High initial explosive drag leading to light gravity float
+            p.vy += 0.08;
+            p.vx *= 0.94;
             p.rotation += p.rotSpeed;
             p.alpha -= p.decay;
 
