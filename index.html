@@ -23,7 +23,7 @@
     h1 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
     p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
 
-    /* Confetti Canvas */
+    /* Confetti Canvas Across Full Viewport */
     #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; }
 
     /* Debug Banner & Live Timer */
@@ -78,7 +78,7 @@
 
     .result-msg { font-size: 1rem; font-weight: bold; margin-top: 15px; min-height: 25px; line-height: 1.4; }
 
-    /* Victory Modal Popup (Hardware Acceleration Isolation Fix) */
+    /* Victory Modal Popup */
     .victory-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 200; justify-content: center; align-items: center; padding: 20px; backface-visibility: hidden; transform: translateZ(0); }
     .victory-card { background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 16px; width: 100%; max-width: 420px; padding: 25px; text-align: center; box-shadow: 0 0 24px rgba(0,255,204,0.25); will-change: transform, opacity; animation: popIn 0.25s ease-out; }
     @keyframes popIn { 0% { transform: scale(0.92); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -180,9 +180,9 @@
       
       <div class="points-breakdown" id="victory-points-msg">+0 PTS</div>
 
-      <a id="victory-sc-link" href="#" target="_blank" onclick="handleSoundCloudLinkClick(event)" class="btn btn-sc">
+      <button id="victory-sc-btn" onclick="handleSoundCloudClick()" class="btn btn-sc">
         LISTEN ON SOUNDCLOUD 🎧
-      </a>
+      </button>
 
       <button class="btn btn-next" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext()">NEXT TRACK ➔</button>
     </div>
@@ -292,7 +292,7 @@
       
       if (fadeOutInterval) clearInterval(fadeOutInterval);
       let currentVol = 100;
-      const stepMs = 50; // 50ms interval across 2000ms = 40 steps
+      const stepMs = 50;
       const volStep = 100 / (2000 / stepMs);
 
       fadeOutInterval = setInterval(() => {
@@ -315,13 +315,18 @@
       });
     }
 
-    function handleSoundCloudLinkClick(event) {
-      event.preventDefault();
-      const targetUrl = currentSong.soundcloudUrl;
+    /* SoundCloud Link Handler: Instantly Opens Tab & Queues Next Song */
+    function handleSoundCloudClick() {
+      if (!currentSong || !currentSong.soundcloudUrl) return;
       
-      fadeOutAudio(() => {
-        window.open(targetUrl, '_blank');
-      });
+      // 1. Open SoundCloud link immediately in a new tab (bypasses browser popup blockers)
+      window.open(currentSong.soundcloudUrl, '_blank');
+      
+      // 2. Close victory window
+      document.getElementById('victory-modal').style.display = 'none';
+      
+      // 3. Fade out audio & load the next track so it's ready when the player returns
+      triggerFadeOutAndNext();
     }
 
     function openDebugModal() {
@@ -431,7 +436,7 @@
         auto_play: false,
         show_artwork: true,
         callback: () => {
-          widget.setVolume(100); // Reset volume to 100% on fresh song load
+          widget.setVolume(100);
           widget.getDuration((dur) => {
             songDurationMs = dur;
           });
@@ -660,14 +665,10 @@
       }
     }
 
-    /* Victory Modal Handler (Includes micro frame delay layout protection) */
     function showVictoryModal(points, diffMult, attemptMult, bonusMsg) {
       document.getElementById('victory-track-title').innerText = currentSong.title;
       document.getElementById('victory-artist').innerText = currentSong.artist;
       document.getElementById('victory-points-msg').innerHTML = `+${points.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)${bonusMsg}`;
-      
-      const scLink = document.getElementById('victory-sc-link');
-      scLink.href = currentSong.soundcloudUrl;
 
       const artImg = document.getElementById('victory-artwork');
       if (preloadedArtworkObj && preloadedArtworkObj.src) {
@@ -676,7 +677,6 @@
         artImg.src = "https://i1.sndcdn.com/avatars-000347293844-0a3k9v-t500x500.jpg";
       }
 
-      // 20ms micro-delay isolates CSS layout engine from GPU paint cycle
       setTimeout(() => {
         document.getElementById('victory-modal').style.display = 'flex';
       }, 20);
@@ -739,7 +739,7 @@
       loadNextSong();
     }
 
-    /* Calibrated Slow-Falling Paper Confetti Engine */
+    /* Slow Piñata-Style Widescreen Confetti Engine */
     let confettiParticles = [];
     let confettiAnimId = null;
 
@@ -759,25 +759,26 @@
       const colors = ['#00ffcc', '#ff0055', '#ffe600', '#00d2ff', '#ff00ff', '#ffffff'];
       
       confettiParticles = [];
-      const particleCount = 180;
+      const particleCount = 200;
 
       for (let i = 0; i < particleCount; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 14 + 4; // Gentle initial velocity
+        // Broad initial spawn spanning 80% of screen width
+        const spawnX = (canvas.width * 0.1) + (Math.random() * (canvas.width * 0.8));
+        const spawnY = canvas.height * 0.25;
 
         confettiParticles.push({
-          x: canvas.width / 2,
-          y: canvas.height * 0.40,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 3,
+          x: spawnX,
+          y: spawnY,
+          vx: (Math.random() - 0.5) * 8, // Soft side drift
+          vy: Math.random() * -4 - 1,    // Light initial upward flutter
           width: Math.random() * 10 + 6,
           height: Math.random() * 6 + 4,
           color: colors[Math.floor(Math.random() * colors.length)],
           rotation: Math.random() * 360,
-          rotSpeed: (Math.random() - 0.5) * 6,
-          alpha: 0.80, // Toned down max opacity by 20%
-          decay: 0.0044, // Calibrated ~3-second total lifespan fade
-          wobble: Math.random() * 10
+          rotSpeed: (Math.random() - 0.5) * 4,
+          alpha: 0.80,
+          decay: 0.0035, // ~3.5 to 4 second slow piñata decay
+          wobble: Math.random() * 20
         });
       }
 
@@ -790,11 +791,11 @@
         confettiParticles.forEach(p => {
           if (p.alpha > 0) {
             active = true;
-            p.wobble += 0.05;
-            p.x += p.vx + Math.sin(p.wobble) * 1.2; // Soft paper flutter wave
+            p.wobble += 0.04;
+            p.x += p.vx + Math.sin(p.wobble) * 1.5; // Feathered paper flutter
             p.y += p.vy;
-            p.vy += 0.18; // 50% slower downward gravity float
-            p.vx *= 0.94;
+            p.vy += 0.06; // Super light gravity float
+            p.vx *= 0.98;
             p.rotation += p.rotSpeed;
             p.alpha -= p.decay;
 
