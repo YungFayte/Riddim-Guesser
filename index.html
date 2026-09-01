@@ -73,16 +73,23 @@
 
   <iframe id="sc-player" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&show_artwork=false" allow="autoplay"></iframe>
 
-  <script>
-    const INTERVALS = [0.5, 1.5, 3, 8, 16];
+<script>
+    let INTERVALS = [0.5, 1.5, 3, 8, 16]; // Your updated intervals
     let songs = [];
     let currentSong = null;
     let currentAttempt = 0;
     let widget = null;
     let isGameOver = false;
+    let isReady = false;
 
     window.onload = async () => {
       widget = SC.Widget(document.getElementById('sc-player'));
+      
+      // Bind SoundCloud Ready Event
+      widget.bind(SC.Widget.Events.READY, () => {
+        isReady = true;
+      });
+
       const response = await fetch('songs.json');
       songs = await response.json();
       loadNextSong();
@@ -90,20 +97,41 @@
 
     function loadNextSong() {
       isGameOver = false;
+      isReady = false;
       currentAttempt = 0;
+      
+      const playBtn = document.getElementById('play-btn');
+      playBtn.innerText = '⏳ LOADING AUDIO...';
+      playBtn.disabled = true;
+
       document.getElementById('result-msg').innerText = '';
       document.getElementById('guess-input').value = '';
       document.getElementById('next-btn').style.display = 'none';
-      document.getElementById('play-btn').style.display = 'block';
+      playBtn.style.display = 'block';
       updateTrackerUI();
 
       currentSong = songs[Math.floor(Math.random() * songs.length)];
-      widget.load(currentSong.soundcloudUrl, { auto_play: false, show_artwork: false });
+      
+      // Load track and immediately seek to start time once buffered
+      widget.load(currentSong.soundcloudUrl, {
+        auto_play: false,
+        show_artwork: false,
+        callback: () => {
+          widget.seekTo(currentSong.startTime * 1000);
+          setTimeout(() => {
+            isReady = true;
+            playBtn.innerText = '▶ PLAY AUDIO';
+            playBtn.disabled = false;
+          }, 300);
+        }
+      });
     }
 
     function playSnippet() {
-      if (!widget || isGameOver) return;
+      if (!widget || isGameOver || !isReady) return;
       const duration = INTERVALS[currentAttempt];
+      
+      // Seek and play seamlessly
       widget.seekTo(currentSong.startTime * 1000);
       widget.play();
 
