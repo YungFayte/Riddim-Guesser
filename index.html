@@ -41,7 +41,7 @@
     /* Meter Container with Interval Notches */
     .audio-progress-container { width: 100%; height: 16px; background: #0d0e12; border: 1px solid #333748; border-radius: 6px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: default; }
     .audio-progress-container.scrubber { cursor: pointer; border-color: var(--debug-color); }
-    .audio-progress-bar { width: 0%; height: 100%; background: var(--accent-color); transition: width 0.05s linear; }
+    .audio-progress-bar { width: 0%; height: 100%; background: var(--accent-color); will-change: width; }
     .audio-progress-container.scrubber .audio-progress-bar { background: var(--debug-color); }
 
     .interval-notch { position: absolute; top: 0; bottom: 0; width: 2px; background: #262936; z-index: 2; pointer-events: none; }
@@ -72,6 +72,23 @@
     .attempt-box.success { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
     .result-msg { font-size: 1rem; font-weight: bold; margin-top: 15px; min-height: 25px; line-height: 1.4; }
+
+    /* Debug Song Selector Modal */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { background: var(--card-bg); border: 1px solid var(--debug-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 80vh; display: flex; flex-direction: column; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #262936; padding-bottom: 10px; }
+    .modal-title { color: var(--debug-color); font-size: 1.2rem; font-weight: bold; }
+    .close-modal-btn { background: transparent; border: none; color: var(--muted-color); font-size: 1.5rem; cursor: pointer; }
+    .close-modal-btn:hover { color: #fff; }
+    .debug-search-input { margin-bottom: 12px; }
+    .song-list-scroll { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+    .song-list-item { background: #0d0e12; border: 1px solid #262936; padding: 12px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+    .song-list-item:hover { border-color: var(--debug-color); background: #141720; }
+    .song-item-info { display: flex; flex-direction: column; }
+    .song-item-id { font-size: 0.75rem; color: var(--debug-color); font-weight: bold; font-family: monospace; }
+    .song-item-title { font-weight: bold; font-size: 0.95rem; color: #fff; }
+    .song-item-artist { font-size: 0.85rem; color: var(--muted-color); }
+
     #sc-player { display: none; }
   </style>
 </head>
@@ -119,7 +136,6 @@
     <!-- Live Audio Meter & Interactive Debug Scrubber -->
     <div class="audio-progress-container" id="progress-container" onclick="handleScrubberClick(event)">
       <div class="audio-progress-bar" id="progress-bar"></div>
-      <!-- Notches created dynamically -->
     </div>
 
     <div class="controls-row">
@@ -136,6 +152,18 @@
     <button class="btn btn-restart" id="restart-btn" onclick="restartGame()">GAME OVER - PLAY AGAIN 🔄</button>
 
     <div class="result-msg" id="result-msg"></div>
+  </div>
+
+  <!-- Debug Selector Modal -->
+  <div class="modal-overlay" id="debug-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">🛠️ DEBUG: SELECT SONG TO LOAD</div>
+        <button class="close-modal-btn" onclick="closeDebugModal()">&times;</button>
+      </div>
+      <input type="text" class="debug-search-input" id="modal-search" placeholder="Filter by song name, artist, or ID..." oninput="filterModalSongs()">
+      <div class="song-list-scroll" id="modal-song-list"></div>
+    </div>
   </div>
 
   <iframe id="sc-player" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&show_artwork=false" allow="autoplay"></iframe>
@@ -164,7 +192,7 @@
     let isTestMode = false;
     let isDebugPlaying = false;
     
-    let playbackInterval = null;
+    let animFrameId = null;
     let songDurationMs = 0;
 
     // Player Resources
@@ -201,10 +229,8 @@
       }
     };
 
-    // Render visual cuts on the meter bar based on interval boundaries
     function renderNotches() {
       const container = document.getElementById('progress-container');
-      // Create notches for intervals before 16s
       for (let i = 0; i < INTERVALS.length - 1; i++) {
         const notchSec = INTERVALS[i];
         const pct = (notchSec / MAX_INTERVAL_SEC) * 100;
@@ -221,6 +247,53 @@
         const j = Math.floor(Math.random() * (i + 1));
         [songDeck[i], songDeck[j]] = [songDeck[j], songDeck[i]];
       }
+    }
+
+    /* Modal Debug Commands */
+    function openDebugModal() {
+      document.getElementById('debug-modal').style.display = 'flex';
+      document.getElementById('modal-search').value = '';
+      populateModalSongList(songs);
+    }
+
+    function closeDebugModal() {
+      document.getElementById('debug-modal').style.display = 'none';
+    }
+
+    function populateModalSongList(list) {
+      const container = document.getElementById('modal-song-list');
+      container.innerHTML = '';
+      
+      list.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'song-list-item';
+        item.onclick = () => {
+          closeDebugModal();
+          forceLoadSongById(s.id);
+        };
+        
+        const diff = s.difficulty || 'Easy';
+
+        item.innerHTML = `
+          <div class="song-item-info">
+            <span class="song-item-id">ID #${s.id}</span>
+            <span class="song-item-title">${s.title}</span>
+            <span class="song-item-artist">${s.artist}</span>
+          </div>
+          <div class="diff-badge diff-${diff.toLowerCase()}">${diff}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function filterModalSongs() {
+      const query = document.getElementById('modal-search').value.toLowerCase().trim();
+      const filtered = songs.filter(s => 
+        String(s.id).includes(query) ||
+        s.title.toLowerCase().includes(query) ||
+        s.artist.toLowerCase().includes(query)
+      );
+      populateModalSongList(filtered);
     }
 
     function forceLoadSongById(targetId) {
@@ -240,7 +313,7 @@
       isReady = false;
       isDebugPlaying = false;
       currentAttempt = 0;
-      stopMeterTracking();
+      stopMeterFrameLoop();
       resetProgressBar();
       
       const playBtn = document.getElementById('play-btn');
@@ -305,23 +378,21 @@
 
       const playBtn = document.getElementById('play-btn');
 
-      // DEBUG MODE: Play / Pause Toggle Functionality
       if (isTestMode) {
         if (isDebugPlaying) {
           widget.pause();
           isDebugPlaying = false;
-          stopMeterTracking();
+          stopMeterFrameLoop();
           playBtn.innerText = '▶ PLAY AUDIO';
         } else {
           widget.play();
           isDebugPlaying = true;
-          startMeterTracking();
+          startMeterFrameLoop();
           playBtn.innerText = '⏸ PAUSE AUDIO';
         }
         return;
       }
 
-      // GAMEPLAY MODE: Snippet Audio Playback
       if (isGameOver) return;
       const snippetSec = INTERVALS[currentAttempt];
       const startMs = Math.floor(currentSong.startTime * 1000);
@@ -329,23 +400,25 @@
 
       widget.seekTo(startMs);
       widget.play();
-      startMeterTracking(startMs, endMs);
+      startMeterFrameLoop(startMs, endMs);
 
       setTimeout(() => {
         if (!isGameOver && !isTestMode) {
           widget.pause();
-          stopMeterTracking();
+          stopMeterFrameLoop();
           resetProgressBar();
         }
       }, snippetSec * 1000);
     }
 
-    function startMeterTracking(startMs = 0, endMs = 0) {
-      stopMeterTracking();
-      playbackInterval = setInterval(() => {
+    /* Ultra-Smooth 60fps+ requestAnimationFrame Meter Renderer */
+    function startMeterFrameLoop(startMs = 0, endMs = 0) {
+      stopMeterFrameLoop();
+
+      function updateFrame() {
+        if (!widget) return;
         widget.getPosition((currentMs) => {
           if (isTestMode) {
-            // Debug Scrubber Tracking (0 to Full Song Length)
             const seconds = (currentMs / 1000).toFixed(2);
             document.getElementById('live-time').innerText = `${seconds}s`;
             if (songDurationMs > 0) {
@@ -353,20 +426,23 @@
               document.getElementById('progress-bar').style.width = `${Math.min(pct, 100)}%`;
             }
           } else {
-            // Gameplay Mode: Progress fills relative to the full 16s total bar width
             const elapsedMs = Math.max(0, currentMs - startMs);
             const elapsedSec = elapsedMs / 1000;
             const pctOfTotalBar = (elapsedSec / MAX_INTERVAL_SEC) * 100;
             document.getElementById('progress-bar').style.width = `${Math.min(pctOfTotalBar, 100)}%`;
           }
         });
-      }, 30);
+
+        animFrameId = requestAnimationFrame(updateFrame);
+      }
+
+      animFrameId = requestAnimationFrame(updateFrame);
     }
 
-    function stopMeterTracking() {
-      if (playbackInterval) {
-        clearInterval(playbackInterval);
-        playbackInterval = null;
+    function stopMeterFrameLoop() {
+      if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
       }
     }
 
@@ -408,10 +484,22 @@
       if (input.toLowerCase().startsWith('id:')) {
         const queryId = input.substring(3).trim();
         dropdown.style.display = 'block';
+        
         const item = document.createElement('div');
         item.className = 'dropdown-item debug';
-        item.innerText = `🛠️ DEV COMMAND: Load Song ID #${queryId}`;
-        item.onclick = () => forceLoadSongById(queryId);
+        
+        if (queryId.length === 0 || queryId.toLowerCase() === 'list') {
+          item.innerText = `🛠️ OPEN DEBUG SONG SELECTOR MENU`;
+          item.onclick = () => {
+            dropdown.style.display = 'none';
+            document.getElementById('guess-input').value = '';
+            openDebugModal();
+          };
+        } else {
+          item.innerText = `🛠️ DEV COMMAND: Load Song ID #${queryId}`;
+          item.onclick = () => forceLoadSongById(queryId);
+        }
+        
         dropdown.appendChild(item);
         return;
       }
@@ -512,7 +600,7 @@
 
     function endRound(isWin) {
       isGameOver = true;
-      stopMeterTracking();
+      stopMeterFrameLoop();
       widget.seekTo(Math.floor(currentSong.startTime * 1000));
       widget.play();
       document.getElementById('skip-btn').disabled = true;
