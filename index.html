@@ -22,7 +22,7 @@
     h1 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
     p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
 
-    /* Debug Tool Banner & Live Timer */
+    /* Debug Banner & Live Timer */
     .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; }
     .timestamp-finder { font-family: monospace; font-size: 1.1rem; color: #fff; background: #000; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--debug-color); margin-top: 5px; display: inline-block; }
 
@@ -38,11 +38,13 @@
     .diff-expert { background: rgba(155, 89, 182, 0.2); color: #9b59b6; border: 1px solid #9b59b6; }
     .diff-impossible { background: rgba(230, 126, 34, 0.2); color: #e67e22; border: 1px solid #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.4); }
 
-    /* Audio Progress Bar & Debug Scrubber Container */
-    .audio-progress-container { width: 100%; height: 12px; background: #0d0e12; border: 1px solid #333748; border-radius: 6px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: default; }
+    /* Meter Container with Interval Notches */
+    .audio-progress-container { width: 100%; height: 16px; background: #0d0e12; border: 1px solid #333748; border-radius: 6px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: default; }
     .audio-progress-container.scrubber { cursor: pointer; border-color: var(--debug-color); }
     .audio-progress-bar { width: 0%; height: 100%; background: var(--accent-color); transition: width 0.05s linear; }
     .audio-progress-container.scrubber .audio-progress-bar { background: var(--debug-color); }
+
+    .interval-notch { position: absolute; top: 0; bottom: 0; width: 2px; background: #262936; z-index: 2; pointer-events: none; }
 
     .controls-row { display: flex; gap: 10px; margin-bottom: 15px; }
     .btn { background: var(--accent-color); color: #000; font-weight: bold; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: transform 0.1s; width: 100%; }
@@ -84,7 +86,7 @@
     <h1>BASS GUESSER</h1>
     <p class="subtitle">Dubstep & Riddim Edition</p>
 
-    <!-- Score & Resource Dashboard -->
+    <!-- Score Dashboard -->
     <div class="scoreboard">
       <div class="score-stat">
         <div class="score-label">Lives</div>
@@ -117,10 +119,11 @@
     <!-- Live Audio Meter & Interactive Debug Scrubber -->
     <div class="audio-progress-container" id="progress-container" onclick="handleScrubberClick(event)">
       <div class="audio-progress-bar" id="progress-bar"></div>
+      <!-- Notches created dynamically -->
     </div>
 
     <div class="controls-row">
-      <button class="btn" id="play-btn" onclick="playSnippet()">▶ PLAY AUDIO</button>
+      <button class="btn" id="play-btn" onclick="toggleAudio()">▶ PLAY AUDIO</button>
       <button class="btn btn-skip" id="skip-btn" onclick="skipTrack()">SKIP ⏭️</button>
     </div>
 
@@ -139,6 +142,7 @@
 
   <script>
     const INTERVALS = [0.5, 1.5, 3, 8, 16];
+    const MAX_INTERVAL_SEC = 16;
     const ATTEMPT_MULTIPLIERS = [5.0, 3.0, 2.0, 1.25, 1.0];
     const BASE_SCORE = 1000;
 
@@ -158,6 +162,7 @@
     let isGameOver = false;
     let isReady = false;
     let isTestMode = false;
+    let isDebugPlaying = false;
     
     let playbackInterval = null;
     let songDurationMs = 0;
@@ -177,6 +182,8 @@
           isReady = true;
         });
 
+        renderNotches();
+
         const response = await fetch('songs.json');
         if (!response.ok) throw new Error("Could not load songs.json");
         songs = await response.json();
@@ -193,6 +200,20 @@
         document.getElementById('result-msg').style.color = "var(--error-color)";
       }
     };
+
+    // Render visual cuts on the meter bar based on interval boundaries
+    function renderNotches() {
+      const container = document.getElementById('progress-container');
+      // Create notches for intervals before 16s
+      for (let i = 0; i < INTERVALS.length - 1; i++) {
+        const notchSec = INTERVALS[i];
+        const pct = (notchSec / MAX_INTERVAL_SEC) * 100;
+        const notch = document.createElement('div');
+        notch.className = 'interval-notch';
+        notch.style.left = `${pct}%`;
+        container.appendChild(notch);
+      }
+    }
 
     function shuffleDeck() {
       songDeck = [...songs];
@@ -217,6 +238,7 @@
     function loadNextSong(forcedSong = null) {
       isGameOver = false;
       isReady = false;
+      isDebugPlaying = false;
       currentAttempt = 0;
       stopMeterTracking();
       resetProgressBar();
@@ -263,7 +285,6 @@
             songDurationMs = dur;
           });
 
-          // In standard gameplay, pre-seek to start time
           if (!isTestMode) {
             widget.seekTo(Math.floor(currentSong.startTime * 1000));
           } else {
@@ -279,21 +300,32 @@
       });
     }
 
-    function playSnippet() {
+    function toggleAudio() {
       if (!widget || !isReady) return;
-      
-      // DEBUG MODE: Full Playback & Scrubber
+
+      const playBtn = document.getElementById('play-btn');
+
+      // DEBUG MODE: Play / Pause Toggle Functionality
       if (isTestMode) {
-        widget.play();
-        startMeterTracking();
+        if (isDebugPlaying) {
+          widget.pause();
+          isDebugPlaying = false;
+          stopMeterTracking();
+          playBtn.innerText = '▶ PLAY AUDIO';
+        } else {
+          widget.play();
+          isDebugPlaying = true;
+          startMeterTracking();
+          playBtn.innerText = '⏸ PAUSE AUDIO';
+        }
         return;
       }
 
-      // GAMEPLAY MODE: Snippet Audio Interval Meter
+      // GAMEPLAY MODE: Snippet Audio Playback
       if (isGameOver) return;
-      const maxIntervalSec = INTERVALS[currentAttempt];
+      const snippetSec = INTERVALS[currentAttempt];
       const startMs = Math.floor(currentSong.startTime * 1000);
-      const endMs = startMs + (maxIntervalSec * 1000);
+      const endMs = startMs + (snippetSec * 1000);
 
       widget.seekTo(startMs);
       widget.play();
@@ -305,10 +337,9 @@
           stopMeterTracking();
           resetProgressBar();
         }
-      }, maxIntervalSec * 1000);
+      }, snippetSec * 1000);
     }
 
-    // Dynamic Live Meter & Scrubber Logic
     function startMeterTracking(startMs = 0, endMs = 0) {
       stopMeterTracking();
       playbackInterval = setInterval(() => {
@@ -322,13 +353,11 @@
               document.getElementById('progress-bar').style.width = `${Math.min(pct, 100)}%`;
             }
           } else {
-            // Gameplay Snippet Meter Tracking (0 to 100% of current interval)
-            const elapsed = currentMs - startMs;
-            const totalSnippetMs = endMs - startMs;
-            if (totalSnippetMs > 0) {
-              const pct = (elapsed / totalSnippetMs) * 100;
-              document.getElementById('progress-bar').style.width = `${Math.max(0, Math.min(pct, 100))}%`;
-            }
+            // Gameplay Mode: Progress fills relative to the full 16s total bar width
+            const elapsedMs = Math.max(0, currentMs - startMs);
+            const elapsedSec = elapsedMs / 1000;
+            const pctOfTotalBar = (elapsedSec / MAX_INTERVAL_SEC) * 100;
+            document.getElementById('progress-bar').style.width = `${Math.min(pctOfTotalBar, 100)}%`;
           }
         });
       }, 30);
@@ -345,7 +374,6 @@
       document.getElementById('progress-bar').style.width = '0%';
     }
 
-    // Scrubber Click Handler (Debug Mode Only)
     function handleScrubberClick(event) {
       if (!isTestMode || !songDurationMs || !widget) return;
       const container = document.getElementById('progress-container');
