@@ -350,5 +350,61 @@
     "soundcloudUrl": "https://soundcloud.com/inaktivity/ad-lv-devil-inaktiv-paranoia-vip-1",
     "startTime": 26.4,
     "difficulty": "Hard"
+  },
+  {
+    "id": 45,
+    "title": "Perish (Packback Remix)",
+    "artist": "Flix",
+    "soundcloudUrl": "https://soundcloud.com/packback/flix-perish-packback-remix-clip",
+    "startTime": 25.6,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 46,
+    "title": "Off",
+    "artist": "NODUBPLATES",
+    "soundcloudUrl": "https://soundcloud.com/nodubplates/off",
+    "startTime": 20.38,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 47,
+    "title": "Off (VIP)",
+    "artist": "NODUBPLATES",
+    "soundcloudUrl": "https://soundcloud.com/nodubplates/off-vip-free",
+    "startTime": 27.3,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 48,
+    "title": "Aegis",
+    "artist": "Saunter",
+    "soundcloudUrl": "https://soundcloud.com/saunterdubstep/saunter-aegis",
+    "startTime": 51.14,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 49,
+    "title": "Stinky",
+    "artist": "Saunter & Stayns",
+    "soundcloudUrl": "https://soundcloud.com/saunterdubstep/saunter-x-stayns-stinky",
+    "startTime": 23.54,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 50,
+    "title": "Flanders",
+    "artist": "Saunter & Packback",
+    "soundcloudUrl": "https://soundcloud.com/saunterdubstep/saunter-x-packback-flanders",
+    "startTime": 50.85,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 51,
+    "title": "Catch!!!",
+    "artist": "Saunter & Stayns",
+    "soundcloudUrl": "https://soundcloud.com/saunterdubstep/saunter-x-stayns-catch",
+    "startTime": 26.2,
+    "difficulty": "Expert"
   }
 ]
