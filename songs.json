@@ -406,5 +406,29 @@
     "soundcloudUrl": "https://soundcloud.com/saunterdubstep/saunter-x-stayns-catch",
     "startTime": 26.2,
     "difficulty": "Expert"
+  },
+  {
+    "id": 52,
+    "title": "Prismatic",
+    "artist": "Saunter",
+    "soundcloudUrl": "https://soundcloud.com/saunterdubstep/saunter-prismatic",
+    "startTime": 53,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 53,
+    "title": "Haunted",
+    "artist": "starg!rl",
+    "soundcloudUrl": "https://soundcloud.com/stargirldubz/4daa4c14-0c9b-4d8a-8477-8787626512bb",
+    "startTime": 48.1,
+    "difficulty": "Impossible"
+  },
+  {
+    "id": 54,
+    "title": "Pots n' Pans",
+    "artist": "Drippy & Saigga",
+    "soundcloudUrl": "https://soundcloud.com/drippy/drippy-kc-dubz-pots-n-pans-clip",
+    "startTime": 39.85,
+    "difficulty": "Medium"
   }
 ]
