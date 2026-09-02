@@ -100,7 +100,7 @@
     p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
 
     /* Confetti Canvas Across Full Viewport */
-    #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; }
+    #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; transform: translateZ(0); }
 
     /* Debug Banner */
     .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; }
@@ -149,11 +149,37 @@
     .dropdown-item.debug { background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border-bottom: 1px solid var(--debug-color); }
     .dropdown-item.debug:hover { background: var(--debug-color); color: #fff; }
 
-    .attempts-tracker { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; }
-    .attempt-box { width: 45px; height: 35px; border: 1px solid #333748; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 6px; color: var(--muted-color); transition: all 0.2s; }
-    .attempt-box.active { border-color: var(--accent-color); color: var(--accent-color); font-weight: bold; box-shadow: 0 0 8px var(--accent-glow); }
-    .attempt-box.fail { background: var(--error-color); color: #fff; border-color: var(--error-color); box-shadow: 0 0 8px var(--error-glow); }
-    .attempt-box.success { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; box-shadow: 0 0 10px var(--accent-glow); }
+    /* Attempts Tracker & Floating Tooltip Notice */
+    .attempts-tracker-wrapper { position: relative; margin-bottom: 15px; }
+    .attempts-tracker { display: flex; gap: 8px; justify-content: center; }
+    .attempt-box { width: 45px; height: 35px; border: 1px solid #333748; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 6px; color: var(--muted-color); transition: all 0.2s; cursor: pointer; position: relative; }
+    .attempt-box.active { border-color: var(--accent-color); color: var(--accent-color); font-weight: bold; box-shadow: 0 0 8px var(--accent-glow); cursor: default; }
+    .attempt-box.fail { background: var(--error-color); color: #fff; border-color: var(--error-color); box-shadow: 0 0 8px var(--error-glow); cursor: default; }
+    .attempt-box.success { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; box-shadow: 0 0 10px var(--accent-glow); cursor: default; }
+
+    .interval-hint-popup {
+      position: absolute;
+      top: -38px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f222e;
+      color: var(--accent-color);
+      border: 1px solid var(--accent-color);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 5;
+    }
+    .interval-hint-popup.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-3px);
+    }
 
     .result-msg { font-size: 1rem; font-weight: bold; margin-top: 15px; min-height: 25px; line-height: 1.4; }
 
@@ -173,8 +199,6 @@
     .track-name-display { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
     .artist-name-display { font-size: 1rem; color: var(--muted-color); margin-bottom: 15px; }
     .points-breakdown { background: #0d0e12; border: 1px solid #262936; border-radius: 8px; padding: 10px; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 15px; }
-    .victory-card.modal-fail .points-breakdown { color: var(--error-color); }
-    .victory-card.modal-skip .points-breakdown { color: var(--muted-color); }
 
     /* Admin & Debug Modal Base */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
@@ -243,12 +267,15 @@
 
     <div id="diff-tag" class="diff-badge diff-easy">Difficulty: Easy</div>
 
-    <div class="attempts-tracker">
-      <div class="attempt-box active" id="box-0">0.5s</div>
-      <div class="attempt-box" id="box-1">1.5s</div>
-      <div class="attempt-box" id="box-2">3s</div>
-      <div class="attempt-box" id="box-3">8s</div>
-      <div class="attempt-box" id="box-4">16s</div>
+    <div class="attempts-tracker-wrapper">
+      <div class="interval-hint-popup" id="interval-hint">Submit a guess to unlock more time! 💡</div>
+      <div class="attempts-tracker">
+        <div class="attempt-box active" id="box-0" onclick="handleAttemptBoxClick(0)" onmouseenter="handleAttemptBoxHover(0)" onmouseleave="hideIntervalHint()">0.5s</div>
+        <div class="attempt-box" id="box-1" onclick="handleAttemptBoxClick(1)" onmouseenter="handleAttemptBoxHover(1)" onmouseleave="hideIntervalHint()">1.5s</div>
+        <div class="attempt-box" id="box-2" onclick="handleAttemptBoxClick(2)" onmouseenter="handleAttemptBoxHover(2)" onmouseleave="hideIntervalHint()">3s</div>
+        <div class="attempt-box" id="box-3" onclick="handleAttemptBoxClick(3)" onmouseenter="handleAttemptBoxHover(3)" onmouseleave="hideIntervalHint()">8s</div>
+        <div class="attempt-box" id="box-4" onclick="handleAttemptBoxClick(4)" onmouseenter="handleAttemptBoxHover(4)" onmouseleave="hideIntervalHint()">16s</div>
+      </div>
     </div>
 
     <div class="audio-progress-container" id="progress-container" onclick="handleScrubberClick(event)">
@@ -400,8 +427,12 @@
     let fadeTimerId = null;
     let snippetTimerId = null;
     let loadTimeoutId = null;
+    let hintTimeoutId = null;
     let songDurationMs = 0;
     let preloadedArtworkObj = null;
+
+    // Track Incorrect Guesses per Round
+    let failedGuessesThisRound = [];
 
     // Player Resources
     let lives = 3;
@@ -451,6 +482,32 @@
           }, 1200);
         }
       }
+    }
+
+    function handleAttemptBoxHover(index) {
+      if (index !== currentAttempt) {
+        showIntervalHint();
+      }
+    }
+
+    function handleAttemptBoxClick(index) {
+      if (index !== currentAttempt) {
+        showIntervalHint();
+      }
+    }
+
+    function showIntervalHint() {
+      const hint = document.getElementById('interval-hint');
+      hint.classList.add('show');
+      if (hintTimeoutId) clearTimeout(hintTimeoutId);
+      hintTimeoutId = setTimeout(() => {
+        hint.classList.remove('show');
+      }, 2000);
+    }
+
+    function hideIntervalHint() {
+      const hint = document.getElementById('interval-hint');
+      hint.classList.remove('show');
     }
 
     function initHotkeys() {
@@ -695,12 +752,17 @@
       isDebugPlaying = false;
       currentAttempt = 0;
       preloadedArtworkObj = null;
+      failedGuessesThisRound = []; // Reset failed guess filter for the new round
       stopMeterFrameLoop();
       resetProgressBar();
       
       const playBtn = document.getElementById('play-btn');
+      const skipBtn = document.getElementById('skip-btn');
+
+      // Lock buttons during track load state to prevent skipping pre-load bugs
       playBtn.innerText = '⏳ LOADING AUDIO...';
       playBtn.disabled = true;
+      skipBtn.disabled = true;
 
       document.getElementById('result-msg').innerText = '';
       document.getElementById('guess-input').value = '';
@@ -731,18 +793,6 @@
       diffTag.innerText = `Difficulty: ${diff} (${mult}x)`;
       diffTag.className = `diff-badge diff-${diff.toLowerCase()}`;
 
-      // Free Skip Logic for Impossible Difficulty
-      const skipBtn = document.getElementById('skip-btn');
-      if (diff.toLowerCase() === "impossible") {
-        skipBtn.disabled = false;
-        skipBtn.innerText = "FREE SKIP ⏭️";
-        skipBtn.className = "btn btn-skip free-skip";
-      } else {
-        skipBtn.disabled = (skips <= 0);
-        skipBtn.innerText = "SKIP ⏭️";
-        skipBtn.className = "btn btn-skip";
-      }
-
       updateDashboardUI();
 
       // Recovery safety net: 5-second max loading fallback
@@ -751,6 +801,7 @@
           isReady = true;
           playBtn.innerText = '▶ PLAY AUDIO';
           playBtn.disabled = false;
+          unlockSkipButton(diff);
         }
       }, 5000);
 
@@ -778,9 +829,23 @@
             isReady = true;
             playBtn.innerText = '▶ PLAY AUDIO';
             playBtn.disabled = false;
+            unlockSkipButton(diff);
           }, 300);
         }
       });
+    }
+
+    function unlockSkipButton(diff) {
+      const skipBtn = document.getElementById('skip-btn');
+      if (diff.toLowerCase() === "impossible") {
+        skipBtn.disabled = false;
+        skipBtn.innerText = "FREE SKIP ⏭️";
+        skipBtn.className = "btn btn-skip free-skip";
+      } else {
+        skipBtn.disabled = (skips <= 0);
+        skipBtn.innerText = "SKIP ⏭️";
+        skipBtn.className = "btn btn-skip";
+      }
     }
 
     function toggleAudio() {
@@ -879,6 +944,7 @@
     }
 
     function skipTrack() {
+      if (!isReady) return; // Prevent skipping before track is ready
       const isImpossible = (currentSong.difficulty || "").toLowerCase() === "impossible";
       if (!isImpossible) {
         if (skips <= 0 || isGameOver) return;
@@ -930,9 +996,12 @@
         return;
       }
 
+      // Filter out tracks that match search input AND haven't already been guessed wrong this round
       const matches = songs.filter(s => 
-        s.title.toLowerCase().includes(input.toLowerCase()) || 
-        s.artist.toLowerCase().includes(input.toLowerCase())
+        !failedGuessesThisRound.includes(s.id) && (
+          s.title.toLowerCase().includes(input.toLowerCase()) || 
+          s.artist.toLowerCase().includes(input.toLowerCase())
+        )
       );
 
       if (matches.length > 0) {
@@ -982,6 +1051,9 @@
         triggerConfettiBurst();
         endRound(true);
       } else {
+        // Add wrong guess ID to round filter so it disappears from future search queries
+        failedGuessesThisRound.push(selectedSong.id);
+
         document.getElementById(`box-${currentAttempt}`).className = 'attempt-box fail';
         triggerCardPulse('fail');
         currentAttempt++;
@@ -1011,13 +1083,13 @@
       modalTitle.innerText = titleText;
 
       if (status === 'win') {
+        pointsBreakdown.style.display = 'block';
         pointsBreakdown.innerHTML = `+${points.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)${bonusMsg}`;
-      } else if (status === 'fail') {
-        modalCard.classList.add('modal-fail');
-        pointsBreakdown.innerText = "ROUND FAILED — NO POINTS AWARDED";
-      } else if (status === 'skip') {
-        modalCard.classList.add('modal-skip');
-        pointsBreakdown.innerText = "TRACK SKIPPED — NO POINTS AWARDED";
+      } else {
+        // Completely remove the points breakdown element for Skips and Out-of-Guesses
+        pointsBreakdown.style.display = 'none';
+        if (status === 'fail') modalCard.classList.add('modal-fail');
+        if (status === 'skip') modalCard.classList.add('modal-skip');
       }
 
       document.getElementById('victory-track-title').innerText = currentSong.title;
@@ -1113,27 +1185,27 @@
       const colors = ['#00ffcc', '#ff0055', '#ffe600', '#00d2ff', '#ff00ff', '#ffffff'];
       
       confettiParticles = [];
-      const particleCount = 140; // Streamlined particle count for optimal frame rates
+      const particleCount = 120; // Optimized particle count to eliminate frame drops
 
       const centerX = canvas.width / 2;
       const centerY = canvas.height * 0.40;
 
       for (let i = 0; i < particleCount; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const blastSpeed = Math.random() * 18 + 6;
+        const blastSpeed = Math.random() * 16 + 5;
 
         confettiParticles.push({
           x: centerX,
           y: centerY,
           vx: Math.cos(angle) * blastSpeed,
           vy: Math.sin(angle) * blastSpeed - 3,
-          width: Math.random() * 8 + 5,
+          width: Math.random() * 8 + 4,
           height: Math.random() * 5 + 3,
           color: colors[Math.floor(Math.random() * colors.length)],
           rotation: Math.random() * 360,
           rotSpeed: (Math.random() - 0.5) * 6,
           alpha: 0.85,
-          decay: 0.0065, // Fast 2.5s fade out to avoid lag
+          decay: 0.0075, // Fast 2.5s fade out to maintain smooth UI transitions
           wobble: Math.random() * 20
         });
       }
