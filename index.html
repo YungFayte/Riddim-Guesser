@@ -52,18 +52,9 @@
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .container.pulse-success {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 40px var(--accent-glow);
-    }
-    .container.pulse-fail {
-      border-color: var(--error-color);
-      box-shadow: 0 0 40px var(--error-glow);
-    }
-    .container.pulse-debug {
-      border-color: var(--debug-color);
-      box-shadow: 0 0 35px var(--debug-glow);
-    }
+    .container.pulse-success { border-color: var(--accent-color); box-shadow: 0 0 40px var(--accent-glow); }
+    .container.pulse-fail { border-color: var(--error-color); box-shadow: 0 0 40px var(--error-glow); }
+    .container.pulse-debug { border-color: var(--debug-color); box-shadow: 0 0 35px var(--debug-glow); }
 
     /* Dev Build Notice Section */
     .dev-notice-box {
@@ -99,17 +90,15 @@
     }
     p.subtitle { color: var(--muted-color); font-size: 0.9rem; margin-bottom: 15px; }
 
-    /* Confetti Canvas Across Full Viewport */
     #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; transform: translateZ(0); }
 
-    /* Debug Banner */
     .test-mode-banner { display: none; background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border: 1px solid var(--debug-color); padding: 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; }
     .timestamp-finder { font-family: monospace; font-size: 1.1rem; color: #fff; background: #000; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--debug-color); margin-top: 5px; display: inline-block; }
 
     .scoreboard { display: flex; justify-content: space-between; background: rgba(13, 14, 18, 0.8); padding: 12px 18px; border-radius: 10px; border: 1px solid #262936; margin-bottom: 15px; }
     .score-stat { text-align: center; }
-    .score-label { font-size: 0.75rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px; }
-    .score-val { font-size: 1.2rem; font-weight: bold; color: var(--accent-color); text-shadow: 0 0 8px var(--accent-glow); }
+    .score-label { font-size: 0.7rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px; }
+    .score-val { font-size: 1.15rem; font-weight: bold; color: var(--accent-color); text-shadow: 0 0 8px var(--accent-glow); }
 
     .diff-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
     .diff-easy { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid #2ed573; }
@@ -117,6 +106,12 @@
     .diff-hard { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
     .diff-expert { background: rgba(155, 89, 182, 0.2); color: #9b59b6; border: 1px solid #9b59b6; }
     .diff-impossible { background: rgba(230, 126, 34, 0.2); color: #e67e22; border: 1px solid #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.4); }
+
+    /* Volume Slider Control HUD */
+    .volume-container { display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(13, 14, 18, 0.6); border: 1px solid #262936; padding: 6px 14px; border-radius: 8px; margin-bottom: 12px; }
+    .volume-icon { font-size: 0.85rem; color: var(--muted-color); font-weight: bold; }
+    .volume-slider { flex: 1; max-width: 180px; accent-color: var(--accent-color); cursor: pointer; height: 4px; }
+    .volume-val { font-size: 0.8rem; color: var(--accent-color); font-weight: bold; font-family: monospace; width: 35px; text-align: right; }
 
     /* Meter Container with Interval Notches */
     .audio-progress-container { width: 100%; height: 16px; background: #0d0e12; border: 1px solid #333748; border-radius: 6px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: default; }
@@ -131,7 +126,7 @@
     .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
     .btn:active { transform: scale(0.98); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; transform: none; box-shadow: none; }
-    .btn-skip { background: #333748; color: #fff; width: 40%; box-shadow: none; }
+    .btn-skip { background: #333748; color: #fff; width: 45%; box-shadow: none; }
     .btn-skip:hover { background: #44495e; }
     .btn-skip.free-skip { background: #e67e22; color: #fff; box-shadow: 0 0 10px rgba(230, 126, 34, 0.4); }
     .btn-next { background: #fff; display: none; margin-top: 15px; width: 100%; box-shadow: 0 0 12px rgba(255,255,255,0.4); }
@@ -149,7 +144,7 @@
     .dropdown-item.debug { background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border-bottom: 1px solid var(--debug-color); }
     .dropdown-item.debug:hover { background: var(--debug-color); color: #fff; }
 
-    /* Attempts Tracker & Floating Tooltip Notice */
+    /* Attempts Tracker & Tooltip */
     .attempts-tracker-wrapper { position: relative; margin-bottom: 15px; }
     .attempts-tracker { display: flex; gap: 8px; justify-content: center; }
     .attempt-box { width: 45px; height: 35px; border: 1px solid #333748; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 6px; color: var(--muted-color); transition: all 0.2s; cursor: pointer; position: relative; }
@@ -260,7 +255,7 @@
         <div class="score-val" id="current-streak">0 🔥</div>
       </div>
       <div class="score-stat">
-        <div class="score-label">Skips</div>
+        <div class="score-label">Song Skips</div>
         <div class="score-val" id="skips-display">⏭️ 3</div>
       </div>
     </div>
@@ -276,6 +271,12 @@
         <div class="attempt-box" id="box-3" onclick="handleAttemptBoxClick(3)" onmouseenter="handleAttemptBoxHover(3)" onmouseleave="hideIntervalHint()">8s</div>
         <div class="attempt-box" id="box-4" onclick="handleAttemptBoxClick(4)" onmouseenter="handleAttemptBoxHover(4)" onmouseleave="hideIntervalHint()">16s</div>
       </div>
+    </div>
+
+    <div class="volume-container">
+      <span class="volume-icon">🔊 VOLUME</span>
+      <input type="range" class="volume-slider" id="volume-control" min="0" max="100" value="100" oninput="handleVolumeChange(this.value)">
+      <span class="volume-val" id="volume-val">100%</span>
     </div>
 
     <div class="audio-progress-container" id="progress-container" onclick="handleScrubberClick(event)">
@@ -431,6 +432,12 @@
     let songDurationMs = 0;
     let preloadedArtworkObj = null;
 
+    // Active Round Identifier to Prevent Audio Leaks Across Preloaded Rounds
+    let activeRoundId = 0;
+
+    // Master Volume Control (Remembers State Across Songs & Rounds)
+    let masterVolumeLevel = 100;
+
     // Track Incorrect Guesses per Round
     let failedGuessesThisRound = [];
 
@@ -447,6 +454,7 @@
         
         widget.bind(SC.Widget.Events.READY, () => {
           isReady = true;
+          widget.setVolume(masterVolumeLevel);
         });
 
         renderNotches();
@@ -470,6 +478,14 @@
       }
     };
 
+    function handleVolumeChange(val) {
+      masterVolumeLevel = parseInt(val, 10);
+      document.getElementById('volume-val').innerText = `${masterVolumeLevel}%`;
+      if (widget) {
+        widget.setVolume(masterVolumeLevel);
+      }
+    }
+
     function triggerCardPulse(type) {
       const card = document.getElementById('main-card');
       card.classList.remove('pulse-success', 'pulse-fail', 'pulse-debug');
@@ -484,14 +500,15 @@
       }
     }
 
+    // Hint tooltips ONLY activate on upcoming locked intervals (> currentAttempt)
     function handleAttemptBoxHover(index) {
-      if (index !== currentAttempt) {
+      if (index > currentAttempt) {
         showIntervalHint();
       }
     }
 
     function handleAttemptBoxClick(index) {
-      if (index !== currentAttempt) {
+      if (index > currentAttempt) {
         showIntervalHint();
       }
     }
@@ -539,18 +556,19 @@
       }
     }
 
-    /* Timestamp-Based Audio Volume Fade Engine */
+    /* Simultaneous Audio Fade & Immediate Next Song Preloader Engine */
     function fadeOutAudio(onCompleteCallback) {
       if (!widget) { if (onCompleteCallback) onCompleteCallback(); return; }
       
       if (fadeTimerId) clearInterval(fadeTimerId);
       const startTime = performance.now();
       const fadeDurationMs = 1000;
+      const initialVol = masterVolumeLevel;
 
       fadeTimerId = setInterval(() => {
         const elapsed = performance.now() - startTime;
         const remainingPct = 1 - Math.min(1, elapsed / fadeDurationMs);
-        const newVol = Math.floor(remainingPct * 100);
+        const newVol = Math.floor(remainingPct * initialVol);
 
         widget.setVolume(newVol);
 
@@ -565,9 +583,9 @@
     }
 
     function triggerFadeOutAndNext() {
-      fadeOutAudio(() => {
-        loadNextSong();
-      });
+      // Fade out audio in background while immediately triggering preloader for zero lag
+      fadeOutAudio();
+      loadNextSong();
     }
 
     function handleSoundCloudClick() {
@@ -747,19 +765,21 @@
       if (snippetTimerId) { clearTimeout(snippetTimerId); snippetTimerId = null; }
       if (loadTimeoutId) { clearTimeout(loadTimeoutId); loadTimeoutId = null; }
       
+      activeRoundId++; // Increment round token to isolate active playback
+      const thisRoundToken = activeRoundId;
+
       isGameOver = false;
       isReady = false;
       isDebugPlaying = false;
       currentAttempt = 0;
       preloadedArtworkObj = null;
-      failedGuessesThisRound = []; // Reset failed guess filter for the new round
+      failedGuessesThisRound = [];
       stopMeterFrameLoop();
       resetProgressBar();
       
       const playBtn = document.getElementById('play-btn');
       const skipBtn = document.getElementById('skip-btn');
 
-      // Lock buttons during track load state to prevent skipping pre-load bugs
       playBtn.innerText = '⏳ LOADING AUDIO...';
       playBtn.disabled = true;
       skipBtn.disabled = true;
@@ -795,13 +815,13 @@
 
       updateDashboardUI();
 
-      // Recovery safety net: 5-second max loading fallback
+      // Fallback safety net if widget stalls during load
       loadTimeoutId = setTimeout(() => {
-        if (!isReady) {
+        if (!isReady && thisRoundToken === activeRoundId) {
           isReady = true;
           playBtn.innerText = '▶ PLAY AUDIO';
           playBtn.disabled = false;
-          unlockSkipButton(diff);
+          updateSkipButtonUI();
         }
       }, 5000);
 
@@ -809,14 +829,16 @@
         auto_play: false,
         show_artwork: true,
         callback: () => {
+          if (thisRoundToken !== activeRoundId) return; // Stale round safeguard
           if (loadTimeoutId) clearTimeout(loadTimeoutId);
-          widget.setVolume(100);
+
+          widget.setVolume(masterVolumeLevel);
           widget.getDuration((dur) => {
-            songDurationMs = dur;
+            if (thisRoundToken === activeRoundId) songDurationMs = dur;
           });
 
           widget.getSounds((sounds) => {
-            if (sounds && sounds.length > 0 && sounds[0].artwork_url) {
+            if (thisRoundToken === activeRoundId && sounds && sounds.length > 0 && sounds[0].artwork_url) {
               const highResArtUrl = sounds[0].artwork_url.replace('-large', '-t500x500');
               preloadedArtworkObj = new Image();
               preloadedArtworkObj.src = highResArtUrl;
@@ -826,25 +848,36 @@
           widget.seekTo(Math.floor(currentSong.startTime * 1000));
 
           setTimeout(() => {
-            isReady = true;
-            playBtn.innerText = '▶ PLAY AUDIO';
-            playBtn.disabled = false;
-            unlockSkipButton(diff);
+            if (thisRoundToken === activeRoundId) {
+              isReady = true;
+              playBtn.innerText = '▶ PLAY AUDIO';
+              playBtn.disabled = false;
+              updateSkipButtonUI();
+            }
           }, 300);
         }
       });
     }
 
-    function unlockSkipButton(diff) {
+    function updateSkipButtonUI() {
       const skipBtn = document.getElementById('skip-btn');
-      if (diff.toLowerCase() === "impossible") {
+      const diff = (currentSong.difficulty || "").toLowerCase();
+
+      if (currentAttempt < INTERVALS.length - 1) {
         skipBtn.disabled = false;
-        skipBtn.innerText = "FREE SKIP ⏭️";
-        skipBtn.className = "btn btn-skip free-skip";
-      } else {
-        skipBtn.disabled = (skips <= 0);
         skipBtn.innerText = "SKIP ⏭️";
         skipBtn.className = "btn btn-skip";
+      } else {
+        // Final Interval reached (16s): Button becomes "SKIP SONG"
+        if (diff === "impossible") {
+          skipBtn.disabled = false;
+          skipBtn.innerText = "FREE SKIP SONG ⏭️";
+          skipBtn.className = "btn btn-skip free-skip";
+        } else {
+          skipBtn.disabled = (skips <= 0);
+          skipBtn.innerText = "SKIP SONG ⏭️";
+          skipBtn.className = "btn btn-skip";
+        }
       }
     }
 
@@ -856,7 +889,7 @@
         snippetTimerId = null;
       }
 
-      widget.setVolume(100);
+      widget.setVolume(masterVolumeLevel);
       const playBtn = document.getElementById('play-btn');
 
       if (isTestMode) {
@@ -944,16 +977,26 @@
     }
 
     function skipTrack() {
-      if (!isReady) return; // Prevent skipping before track is ready
-      const isImpossible = (currentSong.difficulty || "").toLowerCase() === "impossible";
-      if (!isImpossible) {
-        if (skips <= 0 || isGameOver) return;
-        skips--;
+      if (!isReady || isGameOver) return;
+
+      if (currentAttempt < INTERVALS.length - 1) {
+        // Interval Skip: Advance to next unlocked time interval
+        currentAttempt++;
+        updateTrackerUI();
+        updateSkipButtonUI();
+        resetProgressBar();
+      } else {
+        // Song Skip (At 16s interval): Consume Song Skip point and move to modal
+        const isImpossible = (currentSong.difficulty || "").toLowerCase() === "impossible";
+        if (!isImpossible) {
+          if (skips <= 0) return;
+          skips--;
+        }
+        
+        updateDashboardUI();
+        showEndRoundModal('skip', "⏮️ TRACK SKIPPED");
+        endRound(false);
       }
-      
-      updateDashboardUI();
-      showEndRoundModal('skip', "⏮️ TRACK SKIPPED");
-      endRound(false);
     }
 
     function handleSearch() {
@@ -996,7 +1039,6 @@
         return;
       }
 
-      // Filter out tracks that match search input AND haven't already been guessed wrong this round
       const matches = songs.filter(s => 
         !failedGuessesThisRound.includes(s.id) && (
           s.title.toLowerCase().includes(input.toLowerCase()) || 
@@ -1039,7 +1081,7 @@
           let skipBonusMsg = "";
           if (successfulGuessesCounter % 10 === 0) {
             skips++;
-            skipBonusMsg = "<br><span style='color:#00ffcc; font-weight:bold;'>🎁 BONUS: +1 SKIP EARNED!</span>";
+            skipBonusMsg = "<br><span style='color:#00ffcc; font-weight:bold;'>🎁 BONUS: +1 SONG SKIP EARNED!</span>";
           }
 
           updateDashboardUI();
@@ -1051,7 +1093,6 @@
         triggerConfettiBurst();
         endRound(true);
       } else {
-        // Add wrong guess ID to round filter so it disappears from future search queries
         failedGuessesThisRound.push(selectedSong.id);
 
         document.getElementById(`box-${currentAttempt}`).className = 'attempt-box fail';
@@ -1069,11 +1110,12 @@
           endRound(false);
         } else {
           updateTrackerUI();
+          updateSkipButtonUI();
         }
       }
     }
 
-    /* Universal End-of-Round Modal Handler (Win, Fail, & Skip) */
+    /* Universal End-of-Round Modal Handler */
     function showEndRoundModal(status, titleText, points = 0, diffMult = 1, attemptMult = 1, bonusMsg = "") {
       const modalCard = document.getElementById('modal-card');
       const modalTitle = document.getElementById('modal-title-text');
@@ -1086,7 +1128,6 @@
         pointsBreakdown.style.display = 'block';
         pointsBreakdown.innerHTML = `+${points.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)${bonusMsg}`;
       } else {
-        // Completely remove the points breakdown element for Skips and Out-of-Guesses
         pointsBreakdown.style.display = 'none';
         if (status === 'fail') modalCard.classList.add('modal-fail');
         if (status === 'skip') modalCard.classList.add('modal-skip');
@@ -1142,7 +1183,7 @@
     function endRound(isWin) {
       isGameOver = true;
       stopMeterFrameLoop();
-      widget.setVolume(100);
+      widget.setVolume(masterVolumeLevel);
       widget.seekTo(Math.floor(currentSong.startTime * 1000));
       widget.play();
       document.getElementById('skip-btn').disabled = true;
@@ -1185,7 +1226,7 @@
       const colors = ['#00ffcc', '#ff0055', '#ffe600', '#00d2ff', '#ff00ff', '#ffffff'];
       
       confettiParticles = [];
-      const particleCount = 120; // Optimized particle count to eliminate frame drops
+      const particleCount = 120;
 
       const centerX = canvas.width / 2;
       const centerY = canvas.height * 0.40;
@@ -1205,7 +1246,7 @@
           rotation: Math.random() * 360,
           rotSpeed: (Math.random() - 0.5) * 6,
           alpha: 0.85,
-          decay: 0.0075, // Fast 2.5s fade out to maintain smooth UI transitions
+          decay: 0.0075,
           wobble: Math.random() * 20
         });
       }
