@@ -454,5 +454,161 @@
     "soundcloudUrl": "https://soundcloud.com/aiser-dubz/i_said_so",
     "startTime": 27.65,
     "difficulty": "Impossible"
+  },
+  {
+    "id": 58,
+    "title": "Torn",
+    "artist": "BLVCKHOUND",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/blvckhound/torn",
+    "startTime": 26.6,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 59,
+    "title": "Torn VIP",
+    "artist": "BLVCKHOUND",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/blvckhound/torn-vip",
+    "startTime": 27.35,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 60,
+    "title": "Can't Touch This",
+    "artist": "otsukare",
+    "genre": "Dubstep",
+    "tags": [
+      "Girl Riddim"
+    ],
+    "soundcloudUrl": "https://soundcloud.com/otsukaredubs/otsukare-cant-touch-this",
+    "startTime": 25.7,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 61,
+    "title": "Instakill",
+    "artist": "otsukare & HEXX",
+    "genre": "Dubstep",
+    "tags": [
+      "Girl Riddim"
+    ],
+    "soundcloudUrl": "https://soundcloud.com/otsukaredubs/insta-kill",
+    "startTime": 26.45,
+    "difficulty": "Impossible"
+  },
+  {
+    "id": 62,
+    "title": "Chinga Tu Madre",
+    "artist": "SPASS",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/spassfun/chinga-tu-madre-clip",
+    "startTime": 17,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 63,
+    "title": "Nobody Is Safe",
+    "artist": "IVAN & Finningham",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/evangelo-maes/ivan-finningham-nobody-is-safe",
+    "startTime": 27.4,
+    "difficulty": "Impossible"
+  },
+  {
+    "id": 64,
+    "title": "Piece of Sh!t",
+    "artist": "IVAN",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/evangelo-maes/ivan-piece-of-sht-clip",
+    "startTime": 27.48,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 65,
+    "title": "Visions",
+    "artist": "IVAN & LV & P4",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/evangelo-maes/ivan-lv-p4-visions-clip",
+    "startTime": 25.8,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 66,
+    "title": "My Dick Hit The Mixer",
+    "artist": "roi*",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/roidubs/my-dick-hit-the-mixer",
+    "startTime": 33.1,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 67,
+    "title": "Roi The Digger",
+    "artist": "roi*",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/roidubs/the-digger",
+    "startTime": 78.9,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 68,
+    "title": "Hi Tek (roi* \"Bonjour Tek\" Bootleg)",
+    "artist": "SPASS",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/roidubs/spass-hi-tek-roi-bonjour-tek-bootleg-free-dl",
+    "startTime": 25.6,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 69,
+    "title": "Hi Tek",
+    "artist": "SPASS",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/spassfun/spass-hi-tech-clip",
+    "startTime": 22.15,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 70,
+    "title": "Deep Throat",
+    "artist": "SPASS",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/spassfun/deep-throat",
+    "startTime": 27.5,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 71,
+    "title": "Merciless",
+    "artist": "VKTM & Sanzu",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/vktmdubz/vktm-x-sanzu-merciless-free-dl",
+    "startTime": 66.2,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 72,
+    "title": "Girl Riddim Anthem (Too Many Men)",
+    "artist": "AVYDUBZ",
+    "genre": "Dubstep",
+    "tags": [
+      "Girl Riddim"
+    ],
+    "soundcloudUrl": "https://soundcloud.com/avydubz/avydubz-girl-riddim-anthem-too",
+    "startTime": 27.4,
+    "difficulty": "Expert"
   }
 ]
