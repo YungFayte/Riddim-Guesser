@@ -374,7 +374,7 @@
         LISTEN ON SOUNDCLOUD 🎧
       </a>
 
-      <button class="btn btn-next" id="modal-next-btn" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext(); playSfx('click');">NEXT TRACK ➔</button>
+      <button class="btn btn-next" id="modal-action-btn" style="display:block; margin-top:15px;" onclick="handleModalPrimaryAction(); playSfx('click');">NEXT TRACK ➔</button>
     </div>
   </div>
 
@@ -692,14 +692,15 @@
     }
 
     async function triggerFadeOutAndNext() {
-      if (isGameOver && lives <= 0) return;
+      if (lives <= 0 && !isTestMode) return;
       await fadeOutAudioAsync();
       loadNextSong();
     }
 
     function handleSoundCloudClick() {
       document.getElementById('victory-modal').style.display = 'none';
-      if (!isGameOver || lives > 0) {
+      if (widget) widget.pause();
+      if (lives > 0 || isTestMode) {
         triggerFadeOutAndNext();
       }
     }
@@ -1100,7 +1101,7 @@
       const modalCard = document.getElementById('modal-card');
       const modalTitle = document.getElementById('modal-title-text');
       const receiptBox = document.getElementById('victory-receipt-box');
-      const modalNextBtn = document.getElementById('modal-next-btn');
+      const actionBtn = document.getElementById('modal-action-btn');
 
       modalCard.className = "victory-card";
       modalTitle.innerText = titleText;
@@ -1113,11 +1114,14 @@
       const artImg = document.getElementById('victory-artwork');
       artImg.src = (preloadedArtworkObj && preloadedArtworkObj.src) ? preloadedArtworkObj.src : "https://i1.sndcdn.com/avatars-000347293844-0a3k9v-t500x500.jpg";
 
-      // Hide Next button if life count reaches 0 on terminal game over
       if (lives <= 0 && !isTestMode) {
-        modalNextBtn.style.display = 'none';
+        actionBtn.innerText = "CLOSE & REVIEW RUN ➔";
+        actionBtn.style.background = "#333748";
+        actionBtn.style.color = "#fff";
       } else {
-        modalNextBtn.style.display = 'block';
+        actionBtn.innerText = "NEXT TRACK ➔";
+        actionBtn.style.background = "#fff";
+        actionBtn.style.color = "#000";
       }
 
       if (status === 'win') {
@@ -1156,9 +1160,11 @@
       }
     }
 
-    function closeVictoryModalAndNext() {
+    function handleModalPrimaryAction() {
       document.getElementById('victory-modal').style.display = 'none';
-      if (!isGameOver || lives > 0) {
+      if (widget) widget.pause();
+
+      if (lives > 0 || isTestMode) {
         triggerFadeOutAndNext();
       }
     }
@@ -1237,7 +1243,6 @@
 
       if (!isWin) {
         if (lives <= 0 && !isTestMode) {
-          // Lock inputs completely on Terminal Game Over
           document.getElementById('guess-input').disabled = true;
           document.getElementById('play-btn').disabled = true;
           
