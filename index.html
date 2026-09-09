@@ -133,7 +133,6 @@
     .btn-admin { background: var(--debug-color); color: #fff; margin-top: 10px; font-size: 0.85rem; padding: 8px 12px; box-shadow: 0 0 10px var(--debug-glow); }
     .btn-scores { background: #1f222e; color: var(--accent-color); border: 1px solid var(--accent-color); margin-top: 10px; font-size: 0.85rem; padding: 8px 12px; }
 
-    /* Clean Anonymous Artist Match Banner */
     .artist-lock-banner {
       display: none;
       background: rgba(0, 255, 204, 0.15);
@@ -239,7 +238,6 @@
     .close-modal-btn { background: transparent; border: none; color: var(--muted-color); font-size: 1.5rem; cursor: pointer; }
     .close-modal-btn:hover { color: #fff; }
 
-    /* Leaderboard Table */
     .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; text-align: left; }
     .leaderboard-table th { color: var(--muted-color); border-bottom: 1px solid #262936; padding: 8px; text-transform: uppercase; font-size: 0.75rem; }
     .leaderboard-table td { padding: 10px 8px; border-bottom: 1px solid #191c26; color: #fff; }
@@ -322,7 +320,7 @@
     </div>
 
     <div class="controls-row">
-      <button class="btn" id="play-btn" onclick="toggleAudio(); playSfx('click');">▶ PLAY AUDIO</button>
+      <button class="btn" id="play-btn" onclick="toggleAudio()">▶ PLAY AUDIO</button>
       <button class="btn btn-skip" id="skip-btn" onclick="skipTrack(); playSfx('click');">SKIP ⏭️</button>
     </div>
 
@@ -376,7 +374,7 @@
         LISTEN ON SOUNDCLOUD 🎧
       </a>
 
-      <button class="btn btn-next" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext(); playSfx('click');">NEXT TRACK ➔</button>
+      <button class="btn btn-next" id="modal-next-btn" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext(); playSfx('click');">NEXT TRACK ➔</button>
     </div>
   </div>
 
@@ -508,7 +506,6 @@
     let currentStreak = 0;
     let successfulGuessesCounter = 0;
 
-    // Web Audio Synthesizer Engine
     let audioCtx = null;
 
     function initAudioContext() {
@@ -530,24 +527,24 @@
         if (type === 'click') {
           const osc = audioCtx.createOscillator();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
-          masterGain.gain.setValueAtTime(0.08 * volPct, audioCtx.currentTime);
-          masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+          osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.05);
+          masterGain.gain.setValueAtTime(0.20 * volPct, audioCtx.currentTime);
+          masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
           osc.connect(masterGain);
           masterGain.connect(audioCtx.destination);
           osc.start();
-          osc.stop(audioCtx.currentTime + 0.04);
+          osc.stop(audioCtx.currentTime + 0.05);
         } else if (type === 'tick') {
           const osc = audioCtx.createOscillator();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-          masterGain.gain.setValueAtTime(0.04 * volPct, audioCtx.currentTime);
-          masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+          osc.frequency.setValueAtTime(850, audioCtx.currentTime);
+          masterGain.gain.setValueAtTime(0.12 * volPct, audioCtx.currentTime);
+          masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
           osc.connect(masterGain);
           masterGain.connect(audioCtx.destination);
           osc.start();
-          osc.stop(audioCtx.currentTime + 0.02);
+          osc.stop(audioCtx.currentTime + 0.03);
         } else if (type === 'fanfare') {
           const notes = [523.25, 659.25, 783.99, 1046.50];
           notes.forEach((freq, idx) => {
@@ -555,12 +552,12 @@
             const gain = audioCtx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
-            gain.gain.setValueAtTime(0.12 * volPct, audioCtx.currentTime + idx * 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.25);
+            gain.gain.setValueAtTime(0.25 * volPct, audioCtx.currentTime + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.30);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start(audioCtx.currentTime + idx * 0.08);
-            osc.stop(audioCtx.currentTime + idx * 0.08 + 0.25);
+            osc.stop(audioCtx.currentTime + idx * 0.08 + 0.30);
           });
         }
       } catch (e) { console.log(e); }
@@ -695,13 +692,16 @@
     }
 
     async function triggerFadeOutAndNext() {
+      if (isGameOver && lives <= 0) return;
       await fadeOutAudioAsync();
       loadNextSong();
     }
 
     function handleSoundCloudClick() {
       document.getElementById('victory-modal').style.display = 'none';
-      triggerFadeOutAndNext();
+      if (!isGameOver || lives > 0) {
+        triggerFadeOutAndNext();
+      }
     }
 
     function openAdminModal() {
@@ -783,6 +783,8 @@
     }
 
     function loadNextSong(forcedSong = null) {
+      if (lives <= 0 && !isTestMode) return;
+
       if (fadeTimerId) { clearInterval(fadeTimerId); fadeTimerId = null; }
       if (snippetTimerId) { clearTimeout(snippetTimerId); snippetTimerId = null; }
       if (loadTimeoutId) { clearTimeout(loadTimeoutId); loadTimeoutId = null; }
@@ -802,6 +804,7 @@
       playBtn.innerText = '⏳ LOADING AUDIO...';
       playBtn.disabled = true; skipBtn.disabled = true;
 
+      document.getElementById('guess-input').disabled = false;
       document.getElementById('result-msg').innerText = '';
       document.getElementById('guess-input').value = '';
       document.getElementById('dropdown').style.display = 'none';
@@ -877,7 +880,7 @@
     }
 
     function toggleAudio() {
-      if (!widget || !isReady) return;
+      if (!widget || !isReady || (isGameOver && lives <= 0)) return;
       if (snippetTimerId) { clearTimeout(snippetTimerId); snippetTimerId = null; }
 
       widget.setVolume(masterVolumeLevel);
@@ -979,6 +982,7 @@
     }
 
     function handleSearch() {
+      if (isGameOver && lives <= 0) return;
       const input = document.getElementById('guess-input').value.trim();
       const dropdown = document.getElementById('dropdown');
       dropdown.innerHTML = '';
@@ -1014,6 +1018,7 @@
     }
 
     function submitGuess(selectedSong) {
+      if (isGameOver && lives <= 0) return;
       document.getElementById('dropdown').style.display = 'none';
       document.getElementById('guess-input').value = '';
 
@@ -1061,7 +1066,6 @@
       }
     }
 
-    /* Slower & Smooth Ticker Animation with Audio Audio Ticks */
     function animateReceiptTicker(elementId, targetVal, durationMs = 700, prefix = "", suffix = " PTS") {
       return new Promise(resolve => {
         const el = document.getElementById(elementId);
@@ -1096,6 +1100,7 @@
       const modalCard = document.getElementById('modal-card');
       const modalTitle = document.getElementById('modal-title-text');
       const receiptBox = document.getElementById('victory-receipt-box');
+      const modalNextBtn = document.getElementById('modal-next-btn');
 
       modalCard.className = "victory-card";
       modalTitle.innerText = titleText;
@@ -1107,6 +1112,13 @@
 
       const artImg = document.getElementById('victory-artwork');
       artImg.src = (preloadedArtworkObj && preloadedArtworkObj.src) ? preloadedArtworkObj.src : "https://i1.sndcdn.com/avatars-000347293844-0a3k9v-t500x500.jpg";
+
+      // Hide Next button if life count reaches 0 on terminal game over
+      if (lives <= 0 && !isTestMode) {
+        modalNextBtn.style.display = 'none';
+      } else {
+        modalNextBtn.style.display = 'block';
+      }
 
       if (status === 'win') {
         receiptBox.style.display = 'block';
@@ -1146,7 +1158,9 @@
 
     function closeVictoryModalAndNext() {
       document.getElementById('victory-modal').style.display = 'none';
-      triggerFadeOutAndNext();
+      if (!isGameOver || lives > 0) {
+        triggerFadeOutAndNext();
+      }
     }
 
     function updateDashboardUI() {
@@ -1167,7 +1181,6 @@
       }
     }
 
-    /* Local Leaderboard & High Score System */
     function getLocalHighScores() {
       const stored = localStorage.getItem('bass_guesser_highscores');
       return stored ? JSON.parse(stored) : [];
@@ -1185,7 +1198,7 @@
       });
 
       scores.sort((a, b) => b.score - a.score);
-      scores = scores.slice(0, 5); // Keep Top 5
+      scores = scores.slice(0, 5);
 
       localStorage.setItem('bass_guesser_highscores', JSON.stringify(scores));
       return isNewPB;
@@ -1219,10 +1232,15 @@
       widget.setVolume(masterVolumeLevel);
       widget.seekTo(Math.floor(currentSong.startTime * 1000));
       widget.play();
+
       document.getElementById('skip-btn').disabled = true;
 
       if (!isWin) {
         if (lives <= 0 && !isTestMode) {
+          // Lock inputs completely on Terminal Game Over
+          document.getElementById('guess-input').disabled = true;
+          document.getElementById('play-btn').disabled = true;
+          
           const isPB = saveHighScore(totalScore, currentStreak);
           let pbBanner = isPB ? `<br><div class="new-pb-badge">🎉 NEW PERSONAL BEST!</div>` : '';
           
@@ -1242,7 +1260,6 @@
       shuffleDeck(); loadNextSong();
     }
 
-    /* Zero-Lag Pre-Rendered Confetti Engine */
     let confettiParticles = [];
     let confettiAnimId = null;
     let particleSprites = [];
