@@ -131,8 +131,9 @@
     .btn-restart { background: var(--error-color); color: #fff; display: none; margin-top: 15px; width: 100%; box-shadow: 0 0 12px var(--error-glow); }
     .btn-sc { background: var(--sc-orange); color: #fff; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; text-decoration: none; box-shadow: 0 0 12px rgba(255,85,0,0.4); }
     .btn-admin { background: var(--debug-color); color: #fff; margin-top: 10px; font-size: 0.85rem; padding: 8px 12px; box-shadow: 0 0 10px var(--debug-glow); }
+    .btn-scores { background: #1f222e; color: var(--accent-color); border: 1px solid var(--accent-color); margin-top: 10px; font-size: 0.85rem; padding: 8px 12px; }
 
-    /* Confirmed Artist Lock Notification Banner */
+    /* Clean Anonymous Artist Match Banner */
     .artist-lock-banner {
       display: none;
       background: rgba(0, 255, 204, 0.15);
@@ -146,11 +147,6 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       box-shadow: 0 0 12px var(--accent-glow);
-      animation: pulseGlow 1.5s infinite alternate;
-    }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 8px var(--accent-glow); }
-      100% { box-shadow: 0 0 18px var(--accent-glow); }
     }
 
     .search-container { position: relative; margin-bottom: 15px; }
@@ -160,8 +156,6 @@
     .dropdown { position: absolute; width: 100%; background: #1f222e; border: 1px solid #333748; border-radius: 8px; max-height: 180px; overflow-y: auto; z-index: 10; display: none; text-align: left; }
     .dropdown-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #2a2e3d; }
     .dropdown-item:hover { background: var(--accent-color); color: #000; }
-    .dropdown-item.debug { background: rgba(227, 100, 20, 0.2); color: var(--debug-color); border-bottom: 1px solid var(--debug-color); }
-    .dropdown-item.debug:hover { background: var(--debug-color); color: #fff; }
 
     .attempts-tracker-wrapper { position: relative; margin-bottom: 15px; }
     .attempts-tracker { display: flex; gap: 8px; justify-content: center; }
@@ -189,14 +183,8 @@
       transition: opacity 0.2s ease, transform 0.2s ease;
       z-index: 5;
     }
-    .interval-hint-popup.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-3px);
-    }
-    .interval-hint-popup.missed {
-      color: var(--gold-color);
-      border-color: var(--gold-color);
-    }
+    .interval-hint-popup.show { opacity: 1; transform: translateX(-50%) translateY(-3px); }
+    .interval-hint-popup.missed { color: var(--gold-color); border-color: var(--gold-color); }
 
     .result-msg { font-size: 1rem; font-weight: bold; margin-top: 15px; min-height: 25px; line-height: 1.4; }
 
@@ -215,7 +203,6 @@
     .track-name-display { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
     .artist-name-display { font-size: 1rem; color: var(--muted-color); margin-bottom: 15px; }
 
-    /* Score Receipt Breakdown Table */
     .receipt-box {
       background: #090a0d;
       border: 1px dashed var(--accent-color);
@@ -246,26 +233,30 @@
     .receipt-val { text-align: right; }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { background: var(--card-bg); border: 1px solid var(--debug-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px var(--debug-glow); }
+    .modal-content { background: var(--card-bg); border: 1px solid var(--accent-color); border-radius: 12px; width: 100%; max-width: 500px; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px var(--accent-glow); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #262936; padding-bottom: 10px; }
-    .modal-title { color: var(--debug-color); font-size: 1.2rem; font-weight: bold; }
+    .modal-title { color: var(--accent-color); font-size: 1.2rem; font-weight: bold; }
     .close-modal-btn { background: transparent; border: none; color: var(--muted-color); font-size: 1.5rem; cursor: pointer; }
     .close-modal-btn:hover { color: #fff; }
 
-    .admin-form-group { text-align: left; margin-bottom: 12px; }
-    .admin-form-group label { display: block; font-size: 0.8rem; color: var(--muted-color); text-transform: uppercase; margin-bottom: 4px; font-weight: bold; }
-    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .json-output-box { width: 100%; height: 120px; background: #08090c; color: #00ffcc; font-family: monospace; font-size: 0.8rem; padding: 10px; border: 1px solid #262936; border-radius: 6px; resize: none; margin-top: 10px; }
-    .admin-actions { display: flex; gap: 8px; margin-top: 10px; }
+    /* Leaderboard Table */
+    .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; text-align: left; }
+    .leaderboard-table th { color: var(--muted-color); border-bottom: 1px solid #262936; padding: 8px; text-transform: uppercase; font-size: 0.75rem; }
+    .leaderboard-table td { padding: 10px 8px; border-bottom: 1px solid #191c26; color: #fff; }
+    .leaderboard-table tr:first-child td { color: var(--gold-color); font-weight: bold; }
 
-    .debug-search-input { margin-bottom: 12px; }
-    .song-list-scroll { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; text-align: left; }
-    .song-list-item { background: #0d0e12; border: 1px solid #262936; padding: 12px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
-    .song-list-item:hover { border-color: var(--debug-color); background: #141720; }
-    .song-item-info { display: flex; flex-direction: column; }
-    .song-item-id { font-size: 0.75rem; color: var(--debug-color); font-weight: bold; font-family: monospace; }
-    .song-item-title { font-weight: bold; font-size: 0.95rem; color: #fff; }
-    .song-item-artist { font-size: 0.85rem; color: var(--muted-color); }
+    .new-pb-badge {
+      display: inline-block;
+      background: var(--gold-color);
+      color: #000;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(255, 171, 0, 0.5);
+    }
 
     #sc-player { display: none; }
   </style>
@@ -331,12 +322,12 @@
     </div>
 
     <div class="controls-row">
-      <button class="btn" id="play-btn" onclick="toggleAudio()">▶ PLAY AUDIO</button>
-      <button class="btn btn-skip" id="skip-btn" onclick="skipTrack()">SKIP ⏭️</button>
+      <button class="btn" id="play-btn" onclick="toggleAudio(); playSfx('click');">▶ PLAY AUDIO</button>
+      <button class="btn btn-skip" id="skip-btn" onclick="skipTrack(); playSfx('click');">SKIP ⏭️</button>
     </div>
 
     <div id="artist-lock-banner" class="artist-lock-banner">
-      🔒 ARTIST CONFIRMED: <span id="locked-artist-name">...</span>
+      🔒 HINT: ARTIST CONFIRMED! (SEARCH FILTERED)
     </div>
 
     <div class="search-container">
@@ -344,9 +335,13 @@
       <div class="dropdown" id="dropdown"></div>
     </div>
 
-    <button class="btn btn-next" id="next-btn" onclick="triggerFadeOutAndNext()">NEXT TRACK ➔</button>
-    <button class="btn btn-restart" id="restart-btn" onclick="restartGame()">GAME OVER - PLAY AGAIN 🔄</button>
-    <button class="btn btn-admin" onclick="openAdminModal()">🛠️ OPEN SONG BUILDER (ADMIN)</button>
+    <button class="btn btn-next" id="next-btn" onclick="triggerFadeOutAndNext(); playSfx('click');">NEXT TRACK ➔</button>
+    <button class="btn btn-restart" id="restart-btn" onclick="restartGame(); playSfx('click');">GAME OVER - PLAY AGAIN 🔄</button>
+    
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-scores" onclick="openLeaderboardModal(); playSfx('click');">🏆 LOCAL HIGH SCORES</button>
+      <button class="btn btn-admin" onclick="openAdminModal(); playSfx('click');">🛠️ SONG BUILDER</button>
+    </div>
 
     <div class="result-msg" id="result-msg"></div>
   </div>
@@ -358,7 +353,6 @@
       <div class="track-name-display" id="victory-track-title">Track Title</div>
       <div class="artist-name-display" id="victory-artist">Artist Name</div>
       
-      <!-- Receipt Score Breakdown Container -->
       <div class="receipt-box" id="victory-receipt-box">
         <div class="receipt-line" id="line-base">
           <span>BASE SCORE</span>
@@ -378,92 +372,98 @@
         </div>
       </div>
 
-      <a id="victory-sc-anchor" href="#" target="_blank" onclick="handleSoundCloudClick()" class="btn btn-sc">
+      <a id="victory-sc-anchor" href="#" target="_blank" onclick="handleSoundCloudClick(); playSfx('click');" class="btn btn-sc">
         LISTEN ON SOUNDCLOUD 🎧
       </a>
 
-      <button class="btn btn-next" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext()">NEXT TRACK ➔</button>
+      <button class="btn btn-next" style="display:block; margin-top:15px;" onclick="closeVictoryModalAndNext(); playSfx('click');">NEXT TRACK ➔</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="leaderboard-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">🏆 LOCAL HIGH SCORES</div>
+        <button class="close-modal-btn" onclick="closeLeaderboardModal()">&times;</button>
+      </div>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Score</th>
+            <th>Max Streak</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+      </table>
     </div>
   </div>
 
   <div class="modal-overlay" id="admin-modal">
-    <div class="modal-content">
+    <div class="modal-content" style="border-color:var(--debug-color);">
       <div class="modal-header">
-        <div class="modal-title">🛠️ SONG BUILDER & JSON EXPORTER</div>
+        <div class="modal-title" style="color:var(--debug-color);">🛠️ SONG BUILDER & JSON EXPORTER</div>
         <button class="close-modal-btn" onclick="closeAdminModal()">&times;</button>
       </div>
       
       <div style="overflow-y:auto; flex:1; padding-right:5px;">
-        <div class="admin-form-group">
-          <label>SoundCloud Track URL</label>
+        <div style="text-align:left; margin-bottom:12px;">
+          <label style="font-size:0.8rem; color:var(--muted-color); font-weight:bold;">SoundCloud Track URL</label>
           <input type="text" id="admin-sc-url" placeholder="https://soundcloud.com/artist/track-name">
         </div>
 
-        <div class="admin-grid">
-          <div class="admin-form-group">
-            <label>Artist Name</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; margin-bottom:12px;">
+          <div>
+            <label style="font-size:0.8rem; color:var(--muted-color); font-weight:bold;">Artist Name</label>
             <input type="text" id="admin-artist" placeholder="e.g. Subtronics">
           </div>
-          <div class="admin-form-group">
-            <label>Track Title</label>
+          <div>
+            <label style="font-size:0.8rem; color:var(--muted-color); font-weight:bold;">Track Title</label>
             <input type="text" id="admin-title" placeholder="e.g. Scream Saver">
           </div>
         </div>
 
-        <div class="admin-grid">
-          <div class="admin-form-group">
-            <label>Genre / Sub-genre</label>
-            <input type="text" id="admin-genre" placeholder="e.g. Riddim, Future Riddim, Tearout">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; margin-bottom:12px;">
+          <div>
+            <label style="font-size:0.8rem; color:var(--muted-color); font-weight:bold;">Genre</label>
+            <input type="text" id="admin-genre" placeholder="e.g. Riddim">
           </div>
-          <div class="admin-form-group">
-            <label>Tags (Comma Separated)</label>
-            <input type="text" id="admin-tags" placeholder="e.g. Girl Riddim, Double Drop, Classic">
+          <div>
+            <label style="font-size:0.8rem; color:var(--muted-color); font-weight:bold;">Tags</label>
+            <input type="text" id="admin-tags" placeholder="e.g. Double Drop">
           </div>
         </div>
 
-        <div class="admin-grid">
-          <div class="admin-form-group">
-            <label>Start Time (Seconds)</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; margin-bottom:12px;">
+          <div>
+            <label style="font-size:0.8rem; color:var(--muted-color); font-weight:bold;">Start Sec</label>
             <input type="number" id="admin-starttime" placeholder="e.g. 54.5" step="0.5">
           </div>
-          <div class="admin-form-group">
-            <label>Difficulty Rating</label>
+          <div>
+            <label style="font-size:0.8rem; color:var(--muted-color); font-weight:bold;">Difficulty</label>
             <select id="admin-difficulty">
-              <option value="Easy">Easy (Iconic Mainstage)</option>
-              <option value="Medium">Medium (Very Popular)</option>
-              <option value="Hard">Hard (Northern Mainstage)</option>
-              <option value="Expert">Expert (Underground)</option>
-              <option value="Impossible">Impossible (Niche)</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+              <option value="Expert">Expert</option>
+              <option value="Impossible">Impossible</option>
             </select>
           </div>
         </div>
 
-        <div class="admin-actions">
+        <div style="display:flex; gap:8px; margin-top:10px;">
           <button class="btn btn-admin" style="background:#262936;" onclick="testAdminTimestamp()">▶ TEST TIMESTAMP</button>
-          <button class="btn" style="font-size:0.9rem;" onclick="addNewTrackToJSON()">➕ ADD TRACK TO DECK</button>
+          <button class="btn" style="font-size:0.9rem;" onclick="addNewTrackToJSON()">➕ ADD TRACK</button>
         </div>
 
-        <div class="admin-form-group" style="margin-top:15px;">
-          <label>Live Updated songs.json Array</label>
-          <textarea class="json-output-box" id="json-output" readonly></textarea>
-        </div>
+        <textarea class="json-output-box" id="json-output" readonly style="width:100%; height:100px; margin-top:12px; background:#000; color:#00ffcc; font-family:monospace; padding:8px; border-radius:6px;"></textarea>
 
-        <div class="admin-actions">
+        <div style="display:flex; gap:8px; margin-top:10px;">
           <button class="btn btn-admin" style="background:var(--accent-color); color:#000;" onclick="copyJSONToClipboard()">📋 COPY JSON</button>
-          <button class="btn btn-admin" style="background:var(--sc-orange);" onclick="downloadJSONFile()">💾 DOWNLOAD SONGS.JSON</button>
+          <button class="btn btn-admin" style="background:var(--sc-orange);" onclick="downloadJSONFile()">💾 DOWNLOAD</button>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="debug-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">🛠️ DEBUG: SELECT SONG TO LOAD</div>
-        <button class="close-modal-btn" onclick="closeDebugModal()">&times;</button>
-      </div>
-      <input type="text" class="debug-search-input" id="modal-search" placeholder="Filter by song name, artist, or ID..." oninput="filterModalSongs()">
-      <div class="song-list-scroll" id="modal-song-list"></div>
     </div>
   </div>
 
@@ -476,11 +476,7 @@
     const BASE_SCORE = 1000;
 
     const DIFFICULTY_MULTIPLIERS = {
-      "Easy": 1.0,
-      "Medium": 1.25,
-      "Hard": 1.5,
-      "Expert": 2.0,
-      "Impossible": 3.0
+      "Easy": 1.0, "Medium": 1.25, "Hard": 1.5, "Expert": 2.0, "Impossible": 3.0
     };
 
     let songs = [];
@@ -504,7 +500,7 @@
     let activeRoundId = 0;
     let masterVolumeLevel = 100;
     let failedGuessesThisRound = [];
-    let confirmedArtistLock = null; // Confirmed artist lock token for the round
+    let isArtistMatchConfirmed = false;
 
     let lives = 3;
     let skips = 3;
@@ -512,10 +508,67 @@
     let currentStreak = 0;
     let successfulGuessesCounter = 0;
 
+    // Web Audio Synthesizer Engine
+    let audioCtx = null;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSfx(type) {
+      try {
+        initAudioContext();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const masterGain = audioCtx.createGain();
+        const volPct = masterVolumeLevel / 100;
+
+        if (type === 'click') {
+          const osc = audioCtx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
+          masterGain.gain.setValueAtTime(0.08 * volPct, audioCtx.currentTime);
+          masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+          osc.connect(masterGain);
+          masterGain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.04);
+        } else if (type === 'tick') {
+          const osc = audioCtx.createOscillator();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+          masterGain.gain.setValueAtTime(0.04 * volPct, audioCtx.currentTime);
+          masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+          osc.connect(masterGain);
+          masterGain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.02);
+        } else if (type === 'fanfare') {
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
+            gain.gain.setValueAtTime(0.12 * volPct, audioCtx.currentTime + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + idx * 0.08);
+            osc.stop(audioCtx.currentTime + idx * 0.08 + 0.25);
+          });
+        }
+      } catch (e) { console.log(e); }
+    }
+
     window.onload = async () => {
       try {
         widget = SC.Widget(document.getElementById('sc-player'));
-        
         widget.bind(SC.Widget.Events.READY, () => {
           isReady = true;
           widget.setVolume(masterVolumeLevel);
@@ -537,7 +590,7 @@
         }
       } catch (err) {
         console.error(err);
-        document.getElementById('result-msg').innerText = "⚠️ Error loading songs.json file. Check JSON formatting.";
+        document.getElementById('result-msg').innerText = "⚠️ Error loading songs.json file.";
         document.getElementById('result-msg').style.color = "var(--error-color)";
       }
     };
@@ -545,44 +598,32 @@
     function handleVolumeChange(val) {
       masterVolumeLevel = parseInt(val, 10);
       document.getElementById('volume-val').innerText = `${masterVolumeLevel}%`;
-      if (widget) {
-        widget.setVolume(masterVolumeLevel);
-      }
+      if (widget) { widget.setVolume(masterVolumeLevel); }
     }
 
     function triggerCardPulse(type) {
       const card = document.getElementById('main-card');
       card.classList.remove('pulse-success', 'pulse-fail', 'pulse-debug');
-      
       if (type) {
         card.classList.add(`pulse-${type}`);
         if (type !== 'debug') {
-          setTimeout(() => {
-            card.classList.remove(`pulse-${type}`);
-          }, 1200);
+          setTimeout(() => card.classList.remove(`pulse-${type}`), 1200);
         }
       }
     }
 
     function handleAttemptBoxHover(index) {
-      if (index > currentAttempt) {
-        showIntervalHint("locked");
-      } else if (index < currentAttempt) {
-        showIntervalHint("missed");
-      }
+      if (index > currentAttempt) showIntervalHint("locked");
+      else if (index < currentAttempt) showIntervalHint("missed");
     }
 
     function handleAttemptBoxClick(index) {
-      if (index > currentAttempt) {
-        showIntervalHint("locked");
-      } else if (index < currentAttempt) {
-        showIntervalHint("missed");
-      }
+      if (index > currentAttempt) showIntervalHint("locked");
+      else if (index < currentAttempt) showIntervalHint("missed");
     }
 
     function showIntervalHint(type) {
       const hint = document.getElementById('interval-hint');
-      
       if (type === "missed") {
         hint.innerText = "Earn more points by guessing quicker! ⚡";
         hint.className = "interval-hint-popup missed show";
@@ -592,14 +633,11 @@
       }
 
       if (hintTimeoutId) clearTimeout(hintTimeoutId);
-      hintTimeoutId = setTimeout(() => {
-        hint.classList.remove('show');
-      }, 2000);
+      hintTimeoutId = setTimeout(() => hint.classList.remove('show'), 2000);
     }
 
     function hideIntervalHint() {
-      const hint = document.getElementById('interval-hint');
-      hint.classList.remove('show');
+      document.getElementById('interval-hint').classList.remove('show');
     }
 
     function initHotkeys() {
@@ -634,7 +672,6 @@
     function fadeOutAudioAsync() {
       return new Promise((resolve) => {
         if (!widget) { resolve(); return; }
-        
         if (fadeTimerId) clearInterval(fadeTimerId);
         const startTime = performance.now();
         const fadeDurationMs = 1000;
@@ -644,7 +681,6 @@
           const elapsed = performance.now() - startTime;
           const remainingPct = 1 - Math.min(1, elapsed / fadeDurationMs);
           const newVol = Math.floor(remainingPct * initialVol);
-
           widget.setVolume(newVol);
 
           if (remainingPct <= 0) {
@@ -677,6 +713,15 @@
       document.getElementById('admin-modal').style.display = 'none';
     }
 
+    function openLeaderboardModal() {
+      renderLeaderboardTable();
+      document.getElementById('leaderboard-modal').style.display = 'flex';
+    }
+
+    function closeLeaderboardModal() {
+      document.getElementById('leaderboard-modal').style.display = 'none';
+    }
+
     function updateJSONBoxDisplay() {
       document.getElementById('json-output').value = JSON.stringify(songs, null, 2);
     }
@@ -684,28 +729,19 @@
     function testAdminTimestamp() {
       const scUrl = document.getElementById('admin-sc-url').value.trim();
       const startTimeSec = parseFloat(document.getElementById('admin-starttime').value) || 0;
-      
-      if (!scUrl) {
-        alert("Please enter a valid SoundCloud track URL to test.");
-        return;
-      }
+      if (!scUrl) { alert("Please enter a valid SoundCloud URL."); return; }
 
       closeAdminModal();
-      
-      const rawTags = document.getElementById('admin-tags').value;
-      const parsedTags = rawTags ? rawTags.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
-
       const testSongObj = {
         id: "TEST",
         title: document.getElementById('admin-title').value.trim() || "Preview Track",
         artist: document.getElementById('admin-artist').value.trim() || "Preview Artist",
-        genre: document.getElementById('admin-genre').value.trim() || "Dubstep / Riddim",
-        tags: parsedTags,
+        genre: document.getElementById('admin-genre').value.trim() || "Dubstep",
+        tags: [],
         soundcloudUrl: scUrl,
         startTime: startTimeSec,
         difficulty: document.getElementById('admin-difficulty').value
       };
-
       forceLoadSongById(null, testSongObj);
     }
 
@@ -713,49 +749,28 @@
       const scUrl = document.getElementById('admin-sc-url').value.trim();
       const artist = document.getElementById('admin-artist').value.trim();
       const title = document.getElementById('admin-title').value.trim();
-      const genre = document.getElementById('admin-genre').value.trim() || "Dubstep";
-      const rawTags = document.getElementById('admin-tags').value;
-      const parsedTags = rawTags ? rawTags.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
-      const startTimeSec = parseFloat(document.getElementById('admin-starttime').value) || 0;
-      const diff = document.getElementById('admin-difficulty').value;
-
-      if (!scUrl || !artist || !title) {
-        alert("Please fill out SoundCloud URL, Artist, and Track Title.");
-        return;
-      }
+      if (!scUrl || !artist || !title) { alert("Please fill out required fields."); return; }
 
       const nextId = songs.length > 0 ? (Math.max(...songs.map(s => parseInt(s.id) || 0)) + 1) : 1;
-
       const newTrackObj = {
-        id: nextId,
-        title: title,
-        artist: artist,
-        genre: genre,
-        tags: parsedTags,
-        soundcloudUrl: scUrl,
-        startTime: startTimeSec,
-        difficulty: diff
+        id: nextId, title, artist,
+        genre: document.getElementById('admin-genre').value.trim() || "Dubstep",
+        tags: [], soundcloudUrl: scUrl,
+        startTime: parseFloat(document.getElementById('admin-starttime').value) || 0,
+        difficulty: document.getElementById('admin-difficulty').value
       };
 
       songs.push(newTrackObj);
       songDeck.push(newTrackObj);
       updateJSONBoxDisplay();
-
-      document.getElementById('admin-sc-url').value = '';
-      document.getElementById('admin-artist').value = '';
-      document.getElementById('admin-title').value = '';
-      document.getElementById('admin-genre').value = '';
-      document.getElementById('admin-tags').value = '';
-      document.getElementById('admin-starttime').value = '';
-
-      alert(`✅ Track #${nextId} "${artist} - ${title}" added to deck & JSON!`);
+      alert(`✅ Track #${nextId} added!`);
     }
 
     function copyJSONToClipboard() {
       const textarea = document.getElementById('json-output');
       textarea.select();
       navigator.clipboard.writeText(textarea.value);
-      alert("📋 JSON array copied to clipboard! Paste it into your songs.json on GitHub.");
+      alert("📋 JSON array copied!");
     }
 
     function downloadJSONFile() {
@@ -763,74 +778,8 @@
       const blob = new Blob([jsonStr], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = 'songs.json';
-      a.click();
+      a.href = url; a.download = 'songs.json'; a.click();
       URL.revokeObjectURL(url);
-    }
-
-    function openDebugModal() {
-      document.getElementById('debug-modal').style.display = 'flex';
-      document.getElementById('modal-search').value = '';
-      populateModalSongList(songs);
-    }
-
-    function closeDebugModal() {
-      document.getElementById('debug-modal').style.display = 'none';
-    }
-
-    function populateModalSongList(list) {
-      const container = document.getElementById('modal-song-list');
-      container.innerHTML = '';
-      
-      list.forEach(s => {
-        const item = document.createElement('div');
-        item.className = 'song-list-item';
-        item.onclick = () => {
-          closeDebugModal();
-          forceLoadSongById(s.id);
-        };
-        
-        const diff = s.difficulty || 'Easy';
-
-        item.innerHTML = `
-          <div class="song-item-info">
-            <span class="song-item-id">ID #${s.id}</span>
-            <span class="song-item-title">${s.title}</span>
-            <span class="song-item-artist">${s.artist}</span>
-          </div>
-          <div class="diff-badge diff-${diff.toLowerCase()}">${diff}</div>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    function filterModalSongs() {
-      const query = document.getElementById('modal-search').value.toLowerCase().trim();
-      const filtered = songs.filter(s => 
-        String(s.id).includes(query) ||
-        s.title.toLowerCase().includes(query) ||
-        s.artist.toLowerCase().includes(query)
-      );
-      populateModalSongList(filtered);
-    }
-
-    function forceLoadSongById(targetId = null, directSongObj = null) {
-      let found = directSongObj;
-      if (!found && targetId !== null) {
-        found = songs.find(s => String(s.id) === String(targetId));
-      }
-
-      if (!found) {
-        alert(`Song not found!`);
-        return;
-      }
-
-      isTestMode = true;
-      triggerCardPulse('debug');
-      document.getElementById('test-banner').style.display = 'block';
-      document.getElementById('progress-container').classList.add('scrubber');
-      loadNextSong(found);
     }
 
     function loadNextSong(forcedSong = null) {
@@ -841,25 +790,17 @@
       activeRoundId++;
       const thisRoundToken = activeRoundId;
 
-      isGameOver = false;
-      isReady = false;
-      isDebugPlaying = false;
-      currentAttempt = 0;
-      preloadedArtworkObj = null;
-      failedGuessesThisRound = [];
-      confirmedArtistLock = null; // Clear lock token
+      isGameOver = false; isReady = false; isDebugPlaying = false; currentAttempt = 0;
+      preloadedArtworkObj = null; failedGuessesThisRound = []; isArtistMatchConfirmed = false;
 
       document.getElementById('artist-lock-banner').style.display = 'none';
-
-      stopMeterFrameLoop();
-      resetProgressBar();
+      stopMeterFrameLoop(); resetProgressBar();
       
       const playBtn = document.getElementById('play-btn');
       const skipBtn = document.getElementById('skip-btn');
 
       playBtn.innerText = '⏳ LOADING AUDIO...';
-      playBtn.disabled = true;
-      skipBtn.disabled = true;
+      playBtn.disabled = true; skipBtn.disabled = true;
 
       document.getElementById('result-msg').innerText = '';
       document.getElementById('guess-input').value = '';
@@ -870,17 +811,13 @@
       
       updateTrackerUI();
 
-      if (forcedSong) {
-        currentSong = forcedSong;
-      } else {
+      if (forcedSong) { currentSong = forcedSong; }
+      else {
         if (!isTestMode) {
           document.getElementById('test-banner').style.display = 'none';
           document.getElementById('progress-container').classList.remove('scrubber');
         }
-        
-        if (songDeck.length === 0) {
-          shuffleDeck();
-        }
+        if (songDeck.length === 0) shuffleDeck();
         currentSong = songDeck.pop();
       }
       
@@ -894,40 +831,29 @@
 
       loadTimeoutId = setTimeout(() => {
         if (!isReady && thisRoundToken === activeRoundId) {
-          isReady = true;
-          playBtn.innerText = '▶ PLAY AUDIO';
-          playBtn.disabled = false;
+          isReady = true; playBtn.innerText = '▶ PLAY AUDIO'; playBtn.disabled = false;
           updateSkipButtonUI();
         }
       }, 5000);
 
       widget.load(currentSong.soundcloudUrl, {
-        auto_play: false,
-        show_artwork: true,
+        auto_play: false, show_artwork: true,
         callback: () => {
           if (thisRoundToken !== activeRoundId) return;
           if (loadTimeoutId) clearTimeout(loadTimeoutId);
 
           widget.setVolume(masterVolumeLevel);
-          widget.getDuration((dur) => {
-            if (thisRoundToken === activeRoundId) songDurationMs = dur;
-          });
-
+          widget.getDuration((dur) => { if (thisRoundToken === activeRoundId) songDurationMs = dur; });
           widget.getSounds((sounds) => {
             if (thisRoundToken === activeRoundId && sounds && sounds.length > 0 && sounds[0].artwork_url) {
               const highResArtUrl = sounds[0].artwork_url.replace('-large', '-t500x500');
-              preloadedArtworkObj = new Image();
-              preloadedArtworkObj.src = highResArtUrl;
+              preloadedArtworkObj = new Image(); preloadedArtworkObj.src = highResArtUrl;
             }
           });
-
           widget.seekTo(Math.floor(currentSong.startTime * 1000));
-
           setTimeout(() => {
             if (thisRoundToken === activeRoundId) {
-              isReady = true;
-              playBtn.innerText = '▶ PLAY AUDIO';
-              playBtn.disabled = false;
+              isReady = true; playBtn.innerText = '▶ PLAY AUDIO'; playBtn.disabled = false;
               updateSkipButtonUI();
             }
           }, 300);
@@ -940,44 +866,28 @@
       const diff = (currentSong.difficulty || "").toLowerCase();
 
       if (currentAttempt < INTERVALS.length - 1) {
-        skipBtn.disabled = false;
-        skipBtn.innerText = "SKIP ⏭️";
-        skipBtn.className = "btn btn-skip";
+        skipBtn.disabled = false; skipBtn.innerText = "SKIP ⏭️"; skipBtn.className = "btn btn-skip";
       } else {
         if (diff === "impossible") {
-          skipBtn.disabled = false;
-          skipBtn.innerText = "FREE SKIP SONG ⏭️";
-          skipBtn.className = "btn btn-skip free-skip";
+          skipBtn.disabled = false; skipBtn.innerText = "FREE SKIP SONG ⏭️"; skipBtn.className = "btn btn-skip free-skip";
         } else {
-          skipBtn.disabled = (skips <= 0);
-          skipBtn.innerText = "SKIP SONG ⏭️";
-          skipBtn.className = "btn btn-skip";
+          skipBtn.disabled = (skips <= 0); skipBtn.innerText = "SKIP SONG ⏭️"; skipBtn.className = "btn btn-skip";
         }
       }
     }
 
     function toggleAudio() {
       if (!widget || !isReady) return;
-      
-      if (snippetTimerId) {
-        clearTimeout(snippetTimerId);
-        snippetTimerId = null;
-      }
+      if (snippetTimerId) { clearTimeout(snippetTimerId); snippetTimerId = null; }
 
       widget.setVolume(masterVolumeLevel);
       const playBtn = document.getElementById('play-btn');
 
       if (isTestMode) {
         if (isDebugPlaying) {
-          widget.pause();
-          isDebugPlaying = false;
-          stopMeterFrameLoop();
-          playBtn.innerText = '▶ PLAY AUDIO';
+          widget.pause(); isDebugPlaying = false; stopMeterFrameLoop(); playBtn.innerText = '▶ PLAY AUDIO';
         } else {
-          widget.play();
-          isDebugPlaying = true;
-          startMeterFrameLoop();
-          playBtn.innerText = '⏸ PAUSE AUDIO';
+          widget.play(); isDebugPlaying = true; startMeterFrameLoop(); playBtn.innerText = '⏸ PAUSE AUDIO';
         }
         return;
       }
@@ -985,24 +895,20 @@
       if (isGameOver) return;
       const snippetSec = INTERVALS[currentAttempt];
       const startMs = Math.floor(currentSong.startTime * 1000);
-      const endMs = startMs + (snippetSec * 1000);
 
       widget.seekTo(startMs);
       widget.play();
-      startMeterFrameLoop(startMs, endMs);
+      startMeterFrameLoop(startMs, startMs + (snippetSec * 1000));
 
       snippetTimerId = setTimeout(() => {
         if (!isGameOver && !isTestMode) {
-          widget.pause();
-          stopMeterFrameLoop();
-          resetProgressBar();
+          widget.pause(); stopMeterFrameLoop(); resetProgressBar();
         }
       }, snippetSec * 1000);
     }
 
     function startMeterFrameLoop(startMs = 0, endMs = 0) {
       stopMeterFrameLoop();
-
       function updateFrame() {
         if (!widget) return;
         widget.getPosition((currentMs) => {
@@ -1010,28 +916,20 @@
             const seconds = (currentMs / 1000).toFixed(2);
             document.getElementById('live-time').innerText = `${seconds}s`;
             if (songDurationMs > 0) {
-              const pct = (currentMs / songDurationMs) * 100;
-              document.getElementById('progress-bar').style.width = `${Math.min(pct, 100)}%`;
+              document.getElementById('progress-bar').style.width = `${Math.min((currentMs / songDurationMs) * 100, 100)}%`;
             }
           } else {
-            const elapsedMs = Math.max(0, currentMs - startMs);
-            const elapsedSec = elapsedMs / 1000;
-            const pctOfTotalBar = (elapsedSec / MAX_INTERVAL_SEC) * 100;
-            document.getElementById('progress-bar').style.width = `${Math.min(pctOfTotalBar, 100)}%`;
+            const elapsedSec = Math.max(0, currentMs - startMs) / 1000;
+            document.getElementById('progress-bar').style.width = `${Math.min((elapsedSec / MAX_INTERVAL_SEC) * 100, 100)}%`;
           }
         });
-
         animFrameId = requestAnimationFrame(updateFrame);
       }
-
       animFrameId = requestAnimationFrame(updateFrame);
     }
 
     function stopMeterFrameLoop() {
-      if (animFrameId) {
-        cancelAnimationFrame(animFrameId);
-        animFrameId = null;
-      }
+      if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
     }
 
     function resetProgressBar() {
@@ -1042,10 +940,8 @@
       if (!isTestMode || !songDurationMs || !widget) return;
       const container = document.getElementById('progress-container');
       const rect = container.getBoundingClientRect();
-      const clickX = event.clientX - rect.left;
-      const pct = clickX / rect.width;
+      const pct = (event.clientX - rect.left) / rect.width;
       const targetMs = Math.floor(pct * songDurationMs);
-      
       widget.seekTo(targetMs);
       document.getElementById('progress-bar').style.width = `${pct * 100}%`;
       document.getElementById('live-time').innerText = `${(targetMs / 1000).toFixed(2)}s`;
@@ -1053,55 +949,33 @@
 
     function skipTrack() {
       if (!isReady || isGameOver) return;
-
       if (currentAttempt < INTERVALS.length - 1) {
-        currentAttempt++;
-        updateTrackerUI();
-        updateSkipButtonUI();
-        resetProgressBar();
+        currentAttempt++; updateTrackerUI(); updateSkipButtonUI(); resetProgressBar();
       } else {
         const isImpossible = (currentSong.difficulty || "").toLowerCase() === "impossible";
         if (!isImpossible) {
           if (skips <= 0) return;
           skips--;
         }
-        
         updateDashboardUI();
         showEndRoundModal('skip', "⏮️ TRACK SKIPPED");
         endRound(false);
       }
     }
 
-    /* Helper: Extract normalized individual artist tokens from text string */
     function extractArtistTokens(str) {
       if (!str) return [];
       return str.toLowerCase()
         .replace(/[\(\)\[\]]/g, ' ')
         .split(/[\s,&\/x]+|\bfeat\b|\bft\b|\bremix\b|\bedit\b|\bvs\b/i)
         .map(t => t.trim())
-        .filter(t => t.length > 2); // Ignore ultra-short tokens
+        .filter(t => t.length > 2);
     }
 
-    /* Smart Match Engine: Check if guess shares an artist token with current song */
     function checkForArtistMatch(guessSong, actualSong) {
-      const guessTokens = [
-        ...extractArtistTokens(guessSong.artist),
-        ...extractArtistTokens(guessSong.title)
-      ];
-
-      const actualTokens = [
-        ...extractArtistTokens(actualSong.artist),
-        ...extractArtistTokens(actualSong.title)
-      ];
-
-      for (let gToken of guessTokens) {
-        if (actualTokens.includes(gToken)) {
-          // Capitalize confirmed artist name token
-          return gToken.charAt(0).toUpperCase() + gToken.slice(1);
-        }
-      }
-
-      return null;
+      const guessTokens = [...extractArtistTokens(guessSong.artist), ...extractArtistTokens(guessSong.title)];
+      const actualTokens = [...extractArtistTokens(actualSong.artist), ...extractArtistTokens(actualSong.title)];
+      return guessTokens.some(gToken => actualTokens.includes(gToken));
     }
 
     function handleSearch() {
@@ -1109,56 +983,22 @@
       const dropdown = document.getElementById('dropdown');
       dropdown.innerHTML = '';
 
-      if ((input.length < 2 && !confirmedArtistLock) || isGameOver) {
-        dropdown.style.display = 'none';
-        return;
-      }
-
-      if (input.toLowerCase().startsWith('id:')) {
-        const queryId = input.substring(3).trim();
-        dropdown.style.display = 'block';
-        
-        const item = document.createElement('div');
-        item.className = 'dropdown-item debug';
-        
-        if (queryId.toLowerCase() === 'admin' || queryId.toLowerCase() === 'builder') {
-          item.innerText = `🛠️ OPEN SONG BUILDER & JSON EXPORTER`;
-          item.onclick = () => {
-            dropdown.style.display = 'none';
-            document.getElementById('guess-input').value = '';
-            openAdminModal();
-          };
-        } else if (queryId.length === 0 || queryId.toLowerCase() === 'list') {
-          item.innerText = `🛠️ OPEN DEBUG SONG SELECTOR MENU`;
-          item.onclick = () => {
-            dropdown.style.display = 'none';
-            document.getElementById('guess-input').value = '';
-            openDebugModal();
-          };
-        } else {
-          item.innerText = `🛠️ DEV COMMAND: Load Song ID #${queryId}`;
-          item.onclick = () => forceLoadSongById(queryId);
-        }
-        
-        dropdown.appendChild(item);
-        return;
+      if ((input.length < 2 && !isArtistMatchConfirmed) || isGameOver) {
+        dropdown.style.display = 'none'; return;
       }
 
       const matches = songs.filter(s => {
         if (failedGuessesThisRound.includes(s.id)) return false;
 
-        // If artist lock is active, filter ONLY for tracks containing the confirmed artist token
-        if (confirmedArtistLock) {
+        if (isArtistMatchConfirmed) {
+          const actualTokens = [...extractArtistTokens(currentSong.artist), ...extractArtistTokens(currentSong.title)];
           const sTokens = [...extractArtistTokens(s.artist), ...extractArtistTokens(s.title)];
-          if (!sTokens.includes(confirmedArtistLock.toLowerCase())) {
-            return false;
-          }
+          const sharesToken = sTokens.some(st => actualTokens.includes(st));
+          if (!sharesToken) return false;
         }
 
         if (input.length === 0) return true;
-
-        return s.title.toLowerCase().includes(input.toLowerCase()) || 
-               s.artist.toLowerCase().includes(input.toLowerCase());
+        return s.title.toLowerCase().includes(input.toLowerCase()) || s.artist.toLowerCase().includes(input.toLowerCase());
       });
 
       if (matches.length > 0) {
@@ -1170,9 +1010,7 @@
           item.onclick = () => submitGuess(s);
           dropdown.appendChild(item);
         });
-      } else {
-        dropdown.style.display = 'none';
-      }
+      } else { dropdown.style.display = 'none'; }
     }
 
     function submitGuess(selectedSong) {
@@ -1193,32 +1031,19 @@
         const pointsEarned = baseScore + diffBonus + speedBonus;
 
         if (!isTestMode) {
-          totalScore += pointsEarned;
-          currentStreak++;
-          successfulGuessesCounter++;
-
-          let skipBonusMsg = "";
-          if (successfulGuessesCounter % 10 === 0) {
-            skips++;
-            skipBonusMsg = "<br><span style='color:#00ffcc; font-weight:bold;'>🎁 BONUS: +1 SONG SKIP EARNED!</span>";
-          }
-
+          totalScore += pointsEarned; currentStreak++; successfulGuessesCounter++;
+          if (successfulGuessesCounter % 10 === 0) skips++;
           updateDashboardUI();
-          showEndRoundModal('win', "🎉 TRACK GUESSED!", baseScore, diffBonus, speedBonus, pointsEarned, diffName, diffMult, attemptMult, INTERVALS[currentAttempt]);
-        } else {
-          showEndRoundModal('win', "🎉 TRACK GUESSED!", baseScore, diffBonus, speedBonus, pointsEarned, diffName, diffMult, attemptMult, INTERVALS[currentAttempt]);
         }
-        
+
+        showEndRoundModal('win', "🎉 TRACK GUESSED!", baseScore, diffBonus, speedBonus, pointsEarned, diffName, diffMult, attemptMult, INTERVALS[currentAttempt]);
         triggerConfettiBurst();
         endRound(true);
       } else {
         failedGuessesThisRound.push(selectedSong.id);
 
-        // Check cross-field artist match
-        const matchedArtist = checkForArtistMatch(selectedSong, currentSong);
-        if (matchedArtist && !confirmedArtistLock) {
-          confirmedArtistLock = matchedArtist;
-          document.getElementById('locked-artist-name').innerText = matchedArtist.toUpperCase();
+        if (checkForArtistMatch(selectedSong, currentSong) && !isArtistMatchConfirmed) {
+          isArtistMatchConfirmed = true;
           document.getElementById('artist-lock-banner').style.display = 'block';
         }
 
@@ -1227,32 +1052,32 @@
         currentAttempt++;
 
         if (currentAttempt >= INTERVALS.length) {
-          if (!isTestMode) {
-            lives--;
-            currentStreak = 0;
-            updateDashboardUI();
-          }
-
+          if (!isTestMode) { lives--; currentStreak = 0; updateDashboardUI(); }
           showEndRoundModal('fail', "❌ OUT OF GUESSES!");
           endRound(false);
         } else {
-          updateTrackerUI();
-          updateSkipButtonUI();
+          updateTrackerUI(); updateSkipButtonUI();
         }
       }
     }
 
-    /* Score Receipt Counter/Ticker Animation */
-    function animateReceiptTicker(elementId, targetVal, durationMs = 400, prefix = "", suffix = " PTS") {
+    /* Slower & Smooth Ticker Animation with Audio Audio Ticks */
+    function animateReceiptTicker(elementId, targetVal, durationMs = 700, prefix = "", suffix = " PTS") {
       return new Promise(resolve => {
         const el = document.getElementById(elementId);
         const startTime = performance.now();
+        let lastTickVal = 0;
         
         function update(currentTime) {
           const elapsed = currentTime - startTime;
           const progress = Math.min(1, elapsed / durationMs);
           const currentVal = Math.floor(progress * targetVal);
           
+          if (currentVal - lastTickVal > Math.max(1, targetVal / 15)) {
+            playSfx('tick');
+            lastTickVal = currentVal;
+          }
+
           el.innerText = `${prefix}${currentVal.toLocaleString()}${suffix}`;
           
           if (progress < 1) {
@@ -1267,7 +1092,6 @@
       });
     }
 
-    /* Universal End-of-Round Modal Handler with Animated Score Receipt */
     async function showEndRoundModal(status, titleText, base = 0, diffBonus = 0, speedBonus = 0, totalAwarded = 0, diffName = "Easy", diffMult = 1.0, attemptMult = 1.0, speedSec = 0.5) {
       const modalCard = document.getElementById('modal-card');
       const modalTitle = document.getElementById('modal-title-text');
@@ -1275,7 +1099,6 @@
 
       modalCard.className = "victory-card";
       modalTitle.innerText = titleText;
-
       document.getElementById('victory-track-title').innerText = currentSong.title;
       document.getElementById('victory-artist').innerText = currentSong.artist;
 
@@ -1283,16 +1106,10 @@
       scAnchor.href = currentSong.soundcloudUrl;
 
       const artImg = document.getElementById('victory-artwork');
-      if (preloadedArtworkObj && preloadedArtworkObj.src) {
-        artImg.src = preloadedArtworkObj.src;
-      } else {
-        artImg.src = "https://i1.sndcdn.com/avatars-000347293844-0a3k9v-t500x500.jpg";
-      }
+      artImg.src = (preloadedArtworkObj && preloadedArtworkObj.src) ? preloadedArtworkObj.src : "https://i1.sndcdn.com/avatars-000347293844-0a3k9v-t500x500.jpg";
 
       if (status === 'win') {
         receiptBox.style.display = 'block';
-        
-        // Reset lines
         document.getElementById('line-base').className = "receipt-line";
         document.getElementById('line-diff').className = "receipt-line";
         document.getElementById('line-speed').className = "receipt-line";
@@ -1308,19 +1125,17 @@
 
         document.getElementById('victory-modal').style.display = 'flex';
 
-        // Sequenced Ticker Animation
         document.getElementById('line-base').classList.add('active');
-        await animateReceiptTicker('val-base', base, 300);
+        await animateReceiptTicker('val-base', base, 600);
 
         document.getElementById('line-diff').classList.add('active');
-        await animateReceiptTicker('val-diff', diffBonus, 300, "+");
+        await animateReceiptTicker('val-diff', diffBonus, 600, "+");
 
         document.getElementById('line-speed').classList.add('active');
-        await animateReceiptTicker('val-speed', speedBonus, 300, "+");
+        await animateReceiptTicker('val-speed', speedBonus, 600, "+");
 
         document.getElementById('line-total').classList.add('active');
-        await animateReceiptTicker('val-total', totalAwarded, 450);
-
+        await animateReceiptTicker('val-total', totalAwarded, 700);
       } else {
         receiptBox.style.display = 'none';
         if (status === 'fail') modalCard.classList.add('modal-fail');
@@ -1336,9 +1151,7 @@
 
     function updateDashboardUI() {
       let heartsStr = "";
-      for (let i = 0; i < 3; i++) {
-        heartsStr += (i < lives) ? "❤️" : "🖤";
-      }
+      for (let i = 0; i < 3; i++) heartsStr += (i < lives) ? "❤️" : "🖤";
       document.getElementById('lives-display').innerText = heartsStr;
       document.getElementById('total-score').innerText = totalScore.toLocaleString();
       document.getElementById('current-streak').innerText = `${currentStreak} 🔥`;
@@ -1348,14 +1161,56 @@
     function updateTrackerUI() {
       for (let i = 0; i < INTERVALS.length; i++) {
         const box = document.getElementById(`box-${i}`);
-        if (i < currentAttempt) {
-          box.className = 'attempt-box fail';
-        } else if (i === currentAttempt) {
-          box.className = 'attempt-box active';
-        } else {
-          box.className = 'attempt-box';
-        }
+        if (i < currentAttempt) box.className = 'attempt-box fail';
+        else if (i === currentAttempt) box.className = 'attempt-box active';
+        else box.className = 'attempt-box';
       }
+    }
+
+    /* Local Leaderboard & High Score System */
+    function getLocalHighScores() {
+      const stored = localStorage.getItem('bass_guesser_highscores');
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function saveHighScore(score, maxStreak) {
+      if (score <= 0) return false;
+      let scores = getLocalHighScores();
+      const isNewPB = scores.length === 0 || score > scores[0].score;
+
+      scores.push({
+        score: score,
+        streak: maxStreak,
+        date: new Date().toLocaleDateString()
+      });
+
+      scores.sort((a, b) => b.score - a.score);
+      scores = scores.slice(0, 5); // Keep Top 5
+
+      localStorage.setItem('bass_guesser_highscores', JSON.stringify(scores));
+      return isNewPB;
+    }
+
+    function renderLeaderboardTable() {
+      const tbody = document.getElementById('leaderboard-body');
+      const scores = getLocalHighScores();
+      tbody.innerHTML = '';
+
+      if (scores.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--muted-color);">No games played yet!</td></tr>`;
+        return;
+      }
+
+      scores.forEach((s, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>#${idx + 1}</td>
+          <td>${s.score.toLocaleString()}</td>
+          <td>${s.streak} 🔥</td>
+          <td>${s.date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
     function endRound(isWin) {
@@ -1368,20 +1223,23 @@
 
       if (!isWin) {
         if (lives <= 0 && !isTestMode) {
-          document.getElementById('result-msg').innerHTML = `<span style="color:var(--error-color); font-size:1.2rem;">💀 GAME OVER! Final Score: ${totalScore.toLocaleString()}</span>`;
+          const isPB = saveHighScore(totalScore, currentStreak);
+          let pbBanner = isPB ? `<br><div class="new-pb-badge">🎉 NEW PERSONAL BEST!</div>` : '';
+          
+          if (isPB) {
+            triggerConfettiBurst();
+            playSfx('fanfare');
+          }
+
+          document.getElementById('result-msg').innerHTML = `<span style="color:var(--error-color); font-size:1.2rem;">💀 GAME OVER! Final Score: ${totalScore.toLocaleString()}</span>${pbBanner}`;
           document.getElementById('restart-btn').style.display = 'block';
         }
       }
     }
 
     function restartGame() {
-      lives = 3;
-      skips = 3;
-      totalScore = 0;
-      currentStreak = 0;
-      successfulGuessesCounter = 0;
-      shuffleDeck();
-      loadNextSong();
+      lives = 3; skips = 3; totalScore = 0; currentStreak = 0; successfulGuessesCounter = 0;
+      shuffleDeck(); loadNextSong();
     }
 
     /* Zero-Lag Pre-Rendered Confetti Engine */
@@ -1391,49 +1249,37 @@
 
     function initConfetti() {
       const canvas = document.getElementById('confetti-canvas');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
       const colors = ['#00ffcc', '#ff0055', '#ffe600', '#00d2ff', '#ff00ff', '#ffffff'];
       particleSprites = colors.map(color => {
         const offscreen = document.createElement('canvas');
-        offscreen.width = 12;
-        offscreen.height = 8;
+        offscreen.width = 12; offscreen.height = 8;
         const oCtx = offscreen.getContext('2d');
-        oCtx.fillStyle = color;
-        oCtx.fillRect(0, 0, 12, 8);
+        oCtx.fillStyle = color; oCtx.fillRect(0, 0, 12, 8);
         return offscreen;
       });
-
       window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
       });
     }
 
     function triggerConfettiBurst() {
       const canvas = document.getElementById('confetti-canvas');
       const ctx = canvas.getContext('2d');
-      
       confettiParticles = [];
       const particleCount = 80;
-
       const centerX = canvas.width / 2;
       const centerY = canvas.height * 0.40;
 
       for (let i = 0; i < particleCount; i++) {
         const angle = Math.random() * Math.PI * 2;
         const blastSpeed = Math.random() * 14 + 4;
-
         confettiParticles.push({
-          x: centerX,
-          y: centerY,
+          x: centerX, y: centerY,
           vx: Math.cos(angle) * blastSpeed,
           vy: Math.sin(angle) * blastSpeed - 3,
           sprite: particleSprites[Math.floor(Math.random() * particleSprites.length)],
-          alpha: 0.9,
-          decay: 0.012,
-          wobble: Math.random() * 20
+          alpha: 0.9, decay: 0.012, wobble: Math.random() * 20
         });
       }
 
@@ -1442,30 +1288,18 @@
       function renderConfetti() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let active = false;
-
         confettiParticles.forEach(p => {
           if (p.alpha > 0) {
-            active = true;
-            p.wobble += 0.08;
-            p.x += p.vx + Math.sin(p.wobble) * 1.5;
-            p.y += p.vy;
-            
-            p.vy += 0.18;
-            p.vx *= 0.92;
-            p.alpha -= p.decay;
-
+            active = true; p.wobble += 0.08;
+            p.x += p.vx + Math.sin(p.wobble) * 1.5; p.y += p.vy;
+            p.vy += 0.18; p.vx *= 0.92; p.alpha -= p.decay;
             ctx.globalAlpha = Math.max(0, p.alpha);
             ctx.drawImage(p.sprite, p.x, p.y);
           }
         });
-
-        if (active) {
-          confettiAnimId = requestAnimationFrame(renderConfetti);
-        } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
+        if (active) confettiAnimId = requestAnimationFrame(renderConfetti);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
-
       renderConfetti();
     }
   </script>
