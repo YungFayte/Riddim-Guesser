@@ -18,6 +18,7 @@
       --debug-color: #e36414;
       --debug-glow: rgba(227, 100, 20, 0.4);
       --sc-orange: #ff5500;
+      --gold-color: #ffab00;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -131,6 +132,27 @@
     .btn-sc { background: var(--sc-orange); color: #fff; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; text-decoration: none; box-shadow: 0 0 12px rgba(255,85,0,0.4); }
     .btn-admin { background: var(--debug-color); color: #fff; margin-top: 10px; font-size: 0.85rem; padding: 8px 12px; box-shadow: 0 0 10px var(--debug-glow); }
 
+    /* Confirmed Artist Lock Notification Banner */
+    .artist-lock-banner {
+      display: none;
+      background: rgba(0, 255, 204, 0.15);
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 12px var(--accent-glow);
+      animation: pulseGlow 1.5s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 8px var(--accent-glow); }
+      100% { box-shadow: 0 0 18px var(--accent-glow); }
+    }
+
     .search-container { position: relative; margin-bottom: 15px; }
     input[type="text"], input[type="number"], select { width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #333748; color: #fff; border-radius: 8px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
     input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: var(--accent-color); box-shadow: 0 0 8px var(--accent-glow); }
@@ -172,8 +194,8 @@
       transform: translateX(-50%) translateY(-3px);
     }
     .interval-hint-popup.missed {
-      color: #ffab00;
-      border-color: #ffab00;
+      color: var(--gold-color);
+      border-color: var(--gold-color);
     }
 
     .result-msg { font-size: 1rem; font-weight: bold; margin-top: 15px; min-height: 25px; line-height: 1.4; }
@@ -192,7 +214,36 @@
     .album-art { width: 180px; height: 180px; border-radius: 12px; object-fit: cover; border: 2px solid #333748; margin: 0 auto 15px auto; display: block; background: #0d0e12; backface-visibility: hidden; box-shadow: 0 0 16px rgba(0,0,0,0.8); }
     .track-name-display { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
     .artist-name-display { font-size: 1rem; color: var(--muted-color); margin-bottom: 15px; }
-    .points-breakdown { background: #0d0e12; border: 1px solid #262936; border-radius: 8px; padding: 10px; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 15px; }
+
+    /* Score Receipt Breakdown Table */
+    .receipt-box {
+      background: #090a0d;
+      border: 1px dashed var(--accent-color);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: #d1d5db;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    .receipt-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      opacity: 0.3;
+      transition: opacity 0.3s ease;
+    }
+    .receipt-line.active { opacity: 1; }
+    .receipt-line.total-line {
+      border-top: 1px dashed #333748;
+      padding-top: 6px;
+      margin-top: 6px;
+      font-weight: bold;
+      color: var(--accent-color);
+      font-size: 1rem;
+    }
+    .receipt-val { text-align: right; }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
     .modal-content { background: var(--card-bg); border: 1px solid var(--debug-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px var(--debug-glow); }
@@ -284,6 +335,10 @@
       <button class="btn btn-skip" id="skip-btn" onclick="skipTrack()">SKIP ⏭️</button>
     </div>
 
+    <div id="artist-lock-banner" class="artist-lock-banner">
+      🔒 ARTIST CONFIRMED: <span id="locked-artist-name">...</span>
+    </div>
+
     <div class="search-container">
       <input type="text" id="guess-input" placeholder="Search artist or track title..." oninput="handleSearch()">
       <div class="dropdown" id="dropdown"></div>
@@ -303,7 +358,25 @@
       <div class="track-name-display" id="victory-track-title">Track Title</div>
       <div class="artist-name-display" id="victory-artist">Artist Name</div>
       
-      <div class="points-breakdown" id="victory-points-msg">+0 PTS</div>
+      <!-- Receipt Score Breakdown Container -->
+      <div class="receipt-box" id="victory-receipt-box">
+        <div class="receipt-line" id="line-base">
+          <span>BASE SCORE</span>
+          <span class="receipt-val" id="val-base">0 PTS</span>
+        </div>
+        <div class="receipt-line" id="line-diff">
+          <span id="label-diff">DIFFICULTY BONUS</span>
+          <span class="receipt-val" id="val-diff">+0 PTS</span>
+        </div>
+        <div class="receipt-line" id="line-speed">
+          <span id="label-speed">SPEED BONUS</span>
+          <span class="receipt-val" id="val-speed">+0 PTS</span>
+        </div>
+        <div class="receipt-line total-line" id="line-total">
+          <span>TOTAL AWARDED</span>
+          <span class="receipt-val" id="val-total">0 PTS</span>
+        </div>
+      </div>
 
       <a id="victory-sc-anchor" href="#" target="_blank" onclick="handleSoundCloudClick()" class="btn btn-sc">
         LISTEN ON SOUNDCLOUD 🎧
@@ -431,6 +504,7 @@
     let activeRoundId = 0;
     let masterVolumeLevel = 100;
     let failedGuessesThisRound = [];
+    let confirmedArtistLock = null; // Confirmed artist lock token for the round
 
     let lives = 3;
     let skips = 3;
@@ -773,6 +847,10 @@
       currentAttempt = 0;
       preloadedArtworkObj = null;
       failedGuessesThisRound = [];
+      confirmedArtistLock = null; // Clear lock token
+
+      document.getElementById('artist-lock-banner').style.display = 'none';
+
       stopMeterFrameLoop();
       resetProgressBar();
       
@@ -994,12 +1072,44 @@
       }
     }
 
+    /* Helper: Extract normalized individual artist tokens from text string */
+    function extractArtistTokens(str) {
+      if (!str) return [];
+      return str.toLowerCase()
+        .replace(/[\(\)\[\]]/g, ' ')
+        .split(/[\s,&\/x]+|\bfeat\b|\bft\b|\bremix\b|\bedit\b|\bvs\b/i)
+        .map(t => t.trim())
+        .filter(t => t.length > 2); // Ignore ultra-short tokens
+    }
+
+    /* Smart Match Engine: Check if guess shares an artist token with current song */
+    function checkForArtistMatch(guessSong, actualSong) {
+      const guessTokens = [
+        ...extractArtistTokens(guessSong.artist),
+        ...extractArtistTokens(guessSong.title)
+      ];
+
+      const actualTokens = [
+        ...extractArtistTokens(actualSong.artist),
+        ...extractArtistTokens(actualSong.title)
+      ];
+
+      for (let gToken of guessTokens) {
+        if (actualTokens.includes(gToken)) {
+          // Capitalize confirmed artist name token
+          return gToken.charAt(0).toUpperCase() + gToken.slice(1);
+        }
+      }
+
+      return null;
+    }
+
     function handleSearch() {
       const input = document.getElementById('guess-input').value.trim();
       const dropdown = document.getElementById('dropdown');
       dropdown.innerHTML = '';
 
-      if (input.length < 2 || isGameOver) {
+      if ((input.length < 2 && !confirmedArtistLock) || isGameOver) {
         dropdown.style.display = 'none';
         return;
       }
@@ -1034,12 +1144,22 @@
         return;
       }
 
-      const matches = songs.filter(s => 
-        !failedGuessesThisRound.includes(s.id) && (
-          s.title.toLowerCase().includes(input.toLowerCase()) || 
-          s.artist.toLowerCase().includes(input.toLowerCase())
-        )
-      );
+      const matches = songs.filter(s => {
+        if (failedGuessesThisRound.includes(s.id)) return false;
+
+        // If artist lock is active, filter ONLY for tracks containing the confirmed artist token
+        if (confirmedArtistLock) {
+          const sTokens = [...extractArtistTokens(s.artist), ...extractArtistTokens(s.title)];
+          if (!sTokens.includes(confirmedArtistLock.toLowerCase())) {
+            return false;
+          }
+        }
+
+        if (input.length === 0) return true;
+
+        return s.title.toLowerCase().includes(input.toLowerCase()) || 
+               s.artist.toLowerCase().includes(input.toLowerCase());
+      });
 
       if (matches.length > 0) {
         dropdown.style.display = 'block';
@@ -1066,8 +1186,12 @@
         const diffName = currentSong.difficulty || "Easy";
         const diffMult = DIFFICULTY_MULTIPLIERS[diffName] || 1.0;
         const attemptMult = ATTEMPT_MULTIPLIERS[currentAttempt];
-        const pointsEarned = Math.round(BASE_SCORE * diffMult * attemptMult);
         
+        const baseScore = BASE_SCORE;
+        const diffBonus = Math.round(BASE_SCORE * (diffMult - 1));
+        const speedBonus = Math.round(BASE_SCORE * diffMult * (attemptMult - 1));
+        const pointsEarned = baseScore + diffBonus + speedBonus;
+
         if (!isTestMode) {
           totalScore += pointsEarned;
           currentStreak++;
@@ -1080,15 +1204,23 @@
           }
 
           updateDashboardUI();
-          showEndRoundModal('win', "🎉 TRACK GUESSED!", pointsEarned, diffMult, attemptMult, skipBonusMsg);
+          showEndRoundModal('win', "🎉 TRACK GUESSED!", baseScore, diffBonus, speedBonus, pointsEarned, diffName, diffMult, attemptMult, INTERVALS[currentAttempt]);
         } else {
-          showEndRoundModal('win', "🎉 TRACK GUESSED!", 0, diffMult, attemptMult, "<br>(Debug Mode)");
+          showEndRoundModal('win', "🎉 TRACK GUESSED!", baseScore, diffBonus, speedBonus, pointsEarned, diffName, diffMult, attemptMult, INTERVALS[currentAttempt]);
         }
         
         triggerConfettiBurst();
         endRound(true);
       } else {
         failedGuessesThisRound.push(selectedSong.id);
+
+        // Check cross-field artist match
+        const matchedArtist = checkForArtistMatch(selectedSong, currentSong);
+        if (matchedArtist && !confirmedArtistLock) {
+          confirmedArtistLock = matchedArtist;
+          document.getElementById('locked-artist-name').innerText = matchedArtist.toUpperCase();
+          document.getElementById('artist-lock-banner').style.display = 'block';
+        }
 
         document.getElementById(`box-${currentAttempt}`).className = 'attempt-box fail';
         triggerCardPulse('fail');
@@ -1110,22 +1242,39 @@
       }
     }
 
-    function showEndRoundModal(status, titleText, points = 0, diffMult = 1, attemptMult = 1, bonusMsg = "") {
+    /* Score Receipt Counter/Ticker Animation */
+    function animateReceiptTicker(elementId, targetVal, durationMs = 400, prefix = "", suffix = " PTS") {
+      return new Promise(resolve => {
+        const el = document.getElementById(elementId);
+        const startTime = performance.now();
+        
+        function update(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(1, elapsed / durationMs);
+          const currentVal = Math.floor(progress * targetVal);
+          
+          el.innerText = `${prefix}${currentVal.toLocaleString()}${suffix}`;
+          
+          if (progress < 1) {
+            requestAnimationFrame(update);
+          } else {
+            el.innerText = `${prefix}${targetVal.toLocaleString()}${suffix}`;
+            resolve();
+          }
+        }
+        
+        requestAnimationFrame(update);
+      });
+    }
+
+    /* Universal End-of-Round Modal Handler with Animated Score Receipt */
+    async function showEndRoundModal(status, titleText, base = 0, diffBonus = 0, speedBonus = 0, totalAwarded = 0, diffName = "Easy", diffMult = 1.0, attemptMult = 1.0, speedSec = 0.5) {
       const modalCard = document.getElementById('modal-card');
       const modalTitle = document.getElementById('modal-title-text');
-      const pointsBreakdown = document.getElementById('victory-points-msg');
+      const receiptBox = document.getElementById('victory-receipt-box');
 
       modalCard.className = "victory-card";
       modalTitle.innerText = titleText;
-
-      if (status === 'win') {
-        pointsBreakdown.style.display = 'block';
-        pointsBreakdown.innerHTML = `+${points.toLocaleString()} PTS (${diffMult}x Diff × ${attemptMult}x Speed)${bonusMsg}`;
-      } else {
-        pointsBreakdown.style.display = 'none';
-        if (status === 'fail') modalCard.classList.add('modal-fail');
-        if (status === 'skip') modalCard.classList.add('modal-skip');
-      }
 
       document.getElementById('victory-track-title').innerText = currentSong.title;
       document.getElementById('victory-artist').innerText = currentSong.artist;
@@ -1140,9 +1289,44 @@
         artImg.src = "https://i1.sndcdn.com/avatars-000347293844-0a3k9v-t500x500.jpg";
       }
 
-      setTimeout(() => {
+      if (status === 'win') {
+        receiptBox.style.display = 'block';
+        
+        // Reset lines
+        document.getElementById('line-base').className = "receipt-line";
+        document.getElementById('line-diff').className = "receipt-line";
+        document.getElementById('line-speed').className = "receipt-line";
+        document.getElementById('line-total').className = "receipt-line total-line";
+
+        document.getElementById('val-base').innerText = "0 PTS";
+        document.getElementById('val-diff').innerText = "+0 PTS";
+        document.getElementById('val-speed').innerText = "+0 PTS";
+        document.getElementById('val-total').innerText = "0 PTS";
+
+        document.getElementById('label-diff').innerText = `DIFFICULTY (${diffName} ${diffMult}x)`;
+        document.getElementById('label-speed').innerText = `SPEED (${speedSec}s ${attemptMult}x)`;
+
         document.getElementById('victory-modal').style.display = 'flex';
-      }, 20);
+
+        // Sequenced Ticker Animation
+        document.getElementById('line-base').classList.add('active');
+        await animateReceiptTicker('val-base', base, 300);
+
+        document.getElementById('line-diff').classList.add('active');
+        await animateReceiptTicker('val-diff', diffBonus, 300, "+");
+
+        document.getElementById('line-speed').classList.add('active');
+        await animateReceiptTicker('val-speed', speedBonus, 300, "+");
+
+        document.getElementById('line-total').classList.add('active');
+        await animateReceiptTicker('val-total', totalAwarded, 450);
+
+      } else {
+        receiptBox.style.display = 'none';
+        if (status === 'fail') modalCard.classList.add('modal-fail');
+        if (status === 'skip') modalCard.classList.add('modal-skip');
+        document.getElementById('victory-modal').style.display = 'flex';
+      }
     }
 
     function closeVictoryModalAndNext() {
@@ -1200,7 +1384,7 @@
       loadNextSong();
     }
 
-    /* Zero-Lag Pre-Rendered Confetti Engine (Optimized for Firefox Desktop) */
+    /* Zero-Lag Pre-Rendered Confetti Engine */
     let confettiParticles = [];
     let confettiAnimId = null;
     let particleSprites = [];
