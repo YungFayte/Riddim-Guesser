@@ -610,5 +610,15 @@
     "soundcloudUrl": "https://soundcloud.com/avydubz/avydubz-girl-riddim-anthem-too",
     "startTime": 27.4,
     "difficulty": "Expert"
+  },
+  {
+    "id": 73,
+    "title": "Take My Energy!",
+    "artist": "Syzy",
+    "genre": "Future Riddim",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/syzymusic/take-my-energy",
+    "startTime": 79.65,
+    "difficulty": "Hard"
   }
 ]
