@@ -620,5 +620,235 @@
     "soundcloudUrl": "https://soundcloud.com/syzymusic/take-my-energy",
     "startTime": 79.65,
     "difficulty": "Hard"
+  },
+  {
+    "id": 74,
+    "title": "Get A Grip!",
+    "artist": "Syzy & Neonix",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/syzymusic/get-a-grip",
+    "startTime": 82.2,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 75,
+    "title": "In Your Face!",
+    "artist": "Syzy",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/syzymusic/in-your-face",
+    "startTime": 41.75,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 76,
+    "title": "Goin' Ham",
+    "artist": "Syzy",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/syzymusic/goin-ham",
+    "startTime": 39.25,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 77,
+    "title": "Fuck Ur Style (Syzy Remix)",
+    "artist": "Must Die!",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/syzymusic/fuck-ur-style-rmx",
+    "startTime": 76.74,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 78,
+    "title": "Identity Theft",
+    "artist": "Syzy & Akeos",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/syzymusic/syzy-akeos-identity-theft",
+    "startTime": 38.25,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 79,
+    "title": "Poison Muffins",
+    "artist": "Syzy",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/syzymusic/poison-muffins-clip",
+    "startTime": 45.3,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 80,
+    "title": "Goop Gang",
+    "artist": "MILLZ",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/millzzmusic/millz-goop-gang-1",
+    "startTime": 26.3,
+    "difficulty": "Impossible"
+  },
+  {
+    "id": 81,
+    "title": "141",
+    "artist": "Chango",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/chango_dubz/c-141-full",
+    "startTime": 27.15,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 82,
+    "title": "OK",
+    "artist": "Chango",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/fightclub_music/chango-ok",
+    "startTime": 26.6,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 83,
+    "title": "CMF SQUEEZE",
+    "artist": "Stinger vs Chango vs YC",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/stingerdubz/stinger-vs-chango-vs-yc-cmf",
+    "startTime": 27.3,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 84,
+    "title": "Squeeze",
+    "artist": "Chango",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/chango_dubz/squeeze",
+    "startTime": 23.88,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 85,
+    "title": "143",
+    "artist": "Chango",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/chango_dubz/chango-143-clip",
+    "startTime": 26.8,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 86,
+    "title": "Devil (LV VIP)",
+    "artist": "AD & LV",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/lvdubz/ad-lv-devil-lv-vip",
+    "startTime": 26.8,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 87,
+    "title": "Monsterland (SMAL B Edit)",
+    "artist": "Badphaze vs Subfiltronik vs Kanashi vs Infekt",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/smalb_monsters/badphaze-vs-subfiltronik-vs-kanashi-vs-suray-sertin-monsterland-smal-b-edit",
+    "startTime": 82.27,
+    "difficulty": "Medium"
+  },
+  {
+    "id": 88,
+    "title": "Don't Slip (POKLYPZ Remix)",
+    "artist": "STINKAHBELL",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/poklypz/stinkahbell-dont-slip-poklypz-remix",
+    "startTime": 37.7,
+    "difficulty": "Easy"
+  },
+  {
+    "id": 89,
+    "title": "Tractor Dub (Jox Special)",
+    "artist": "DVEIGHT",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/dveightnumbertwo/tractor-dub-jox-special-clip",
+    "startTime": 34,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 90,
+    "title": "Orbital Motion",
+    "artist": "AD",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/ad_dubstepper/ad-orbital-motion-clip",
+    "startTime": 27.38,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 91,
+    "title": "Mayhem",
+    "artist": "AD & Akirah",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/ad_dubstepper/ad-akira-mayhem-clip",
+    "startTime": 27.4,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 92,
+    "title": "It Follows (RYU VIP)",
+    "artist": "AD",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/666ryu/ad-it-follows-ryu-vip-clip",
+    "startTime": 27.35,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 93,
+    "title": "It Follows",
+    "artist": "AD",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/ad_dubstepper/ad-it-follows-clip",
+    "startTime": 27.39,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 94,
+    "title": "Devil (JG Dubz VIP)",
+    "artist": "AD & LV",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/jgdubz/devil",
+    "startTime": 27.15,
+    "difficulty": "Hard"
+  },
+  {
+    "id": 95,
+    "title": "We Ballin'",
+    "artist": "JG Dubz & Saigga",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/jgdubz/ballin",
+    "startTime": 26.5,
+    "difficulty": "Expert"
+  },
+  {
+    "id": 96,
+    "title": "Paimon (Belgium VIP)",
+    "artist": "JG Dubz",
+    "genre": "Dubstep",
+    "tags": [],
+    "soundcloudUrl": "https://soundcloud.com/jgdubz/paimon-vip",
+    "startTime": 27.45,
+    "difficulty": "Expert"
   }
 ]
