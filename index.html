@@ -1195,19 +1195,34 @@
     function saveHighScore(score, maxStreak) {
       if (score <= 0) return false;
       let scores = getLocalHighScores();
+
+      const existingEntryIndex = scores.findIndex(s => s.isCurrentRun);
       const isNewPB = scores.length === 0 || score > scores[0].score;
 
-      scores.push({
-        score: score,
-        streak: maxStreak,
-        date: new Date().toLocaleDateString()
-      });
+      if (existingEntryIndex !== -1) {
+        scores[existingEntryIndex].score = score;
+        scores[existingEntryIndex].streak = Math.max(scores[existingEntryIndex].streak, maxStreak);
+        scores[existingEntryIndex].date = new Date().toLocaleDateString();
+      } else {
+        scores.push({
+          score: score,
+          streak: maxStreak,
+          date: new Date().toLocaleDateString(),
+          isCurrentRun: true
+        });
+      }
 
       scores.sort((a, b) => b.score - a.score);
       scores = scores.slice(0, 5);
 
       localStorage.setItem('bass_guesser_highscores', JSON.stringify(scores));
       return isNewPB;
+    }
+
+    function finalizeRunInLeaderboard() {
+      let scores = getLocalHighScores();
+      scores.forEach(s => delete s.isCurrentRun);
+      localStorage.setItem('bass_guesser_highscores', JSON.stringify(scores));
     }
 
     function renderLeaderboardTable() {
@@ -1241,12 +1256,18 @@
 
       document.getElementById('skip-btn').disabled = true;
 
+      if (!isTestMode && totalScore > 0) {
+        saveHighScore(totalScore, currentStreak);
+      }
+
       if (!isWin) {
         if (lives <= 0 && !isTestMode) {
           document.getElementById('guess-input').disabled = true;
           document.getElementById('play-btn').disabled = true;
           
           const isPB = saveHighScore(totalScore, currentStreak);
+          finalizeRunInLeaderboard();
+
           let pbBanner = isPB ? `<br><div class="new-pb-badge">🎉 NEW PERSONAL BEST!</div>` : '';
           
           if (isPB) {
@@ -1261,6 +1282,7 @@
     }
 
     function restartGame() {
+      finalizeRunInLeaderboard();
       lives = 3; skips = 3; totalScore = 0; currentStreak = 0; successfulGuessesCounter = 0;
       shuffleDeck(); loadNextSong();
     }
@@ -1275,9 +1297,9 @@
       const colors = ['#00ffcc', '#ff0055', '#ffe600', '#00d2ff', '#ff00ff', '#ffffff'];
       particleSprites = colors.map(color => {
         const offscreen = document.createElement('canvas');
-        offscreen.width = 12; offscreen.height = 8;
+        offscreen.width = 4; offscreen.height = 3;
         const oCtx = offscreen.getContext('2d');
-        oCtx.fillStyle = color; oCtx.fillRect(0, 0, 12, 8);
+        oCtx.fillStyle = color; oCtx.fillRect(0, 0, 4, 3);
         return offscreen;
       });
       window.addEventListener('resize', () => {
@@ -1289,13 +1311,13 @@
       const canvas = document.getElementById('confetti-canvas');
       const ctx = canvas.getContext('2d');
       confettiParticles = [];
-      const particleCount = 80;
+      const particleCount = 100;
       const centerX = canvas.width / 2;
       const centerY = canvas.height * 0.40;
 
       for (let i = 0; i < particleCount; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const blastSpeed = Math.random() * 14 + 4;
+        const blastSpeed = Math.random() * 12 + 3;
         confettiParticles.push({
           x: centerX, y: centerY,
           vx: Math.cos(angle) * blastSpeed,
